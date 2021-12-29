@@ -1,2 +1,6 @@
 # JingZ-P1
-My Project 1 Repo
+## Welcome to My Project 1 Repo.
+## My Database Diagram:
+![Alt database_diagram](./dbDiagrams/DatabaseDiagram.jpg)
+## My Database Outline:
+![Alt database_diagram](./dbDiagrams/DatabaseOutline.jpg)
