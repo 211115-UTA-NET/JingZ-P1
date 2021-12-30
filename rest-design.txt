@@ -1,0 +1,45 @@
+// store info
+/api/stores
+	GET - list all store location
+/api/store/{locationid}
+	GET - list all products of the store location
+
+
+
+// customer api
+/api/customer/{id}
+    GET - find customer by id
+	// what about search customer by name?
+	// take id as string so -> can be id/name
+	// or just use query:
+/api/customer/?customerid={id} || ?firstname={...}&lastname={...}
+	
+/api/customer
+	POST - Add customer first&last name
+	
+	
+	
+// order api
+/api/orders
+	POST - Add order: List<Order> class type
+	
+/api/orders?List<Order>
+	Get - get product price of each item in this order
+	
+/api/orders?customerID={id}&orderNum=111
+	GET - find specific order
+
+/api/orders?customerID={id}
+	GET - get all order history of customerID {id}
+	
+/api/orders?mostrecent=true
+	GET - mostrecent order/also able to get order number
+
+/api/orders?customerID={id}&locationID=1
+	GET - get location order history of customer {id}
+	
+	
+	
+// inventory api
+/api/inventory?productName={name}&locationID={id}
+
