@@ -27,7 +27,7 @@ Nov 15 2021 Arlington .NET / Richard Hawkins, Nick Escalona
 * don't use public fields √
 * define and use at least one interface √
 * best practices: separation of concerns, OOP principles, SOLID, REST, HTTP
-* XML documentation ?
+* XML documentation √
 
 ## My Database Diagram:
 ![Alt database_diagram](./dbDiagrams/DatabaseDiagram.jpg)
@@ -75,6 +75,7 @@ Nov 15 2021 Arlington .NET / Richard Hawkins, Nick Escalona
 * recommended to keep the console app project for only console interface concerns, not HTTP concerns
 
 ### tests
-* at least 10 test methods √
+* at least 10 test methods
+* at least 1 test should use Moq
 * no tests should connect to the app's actual database √
 
