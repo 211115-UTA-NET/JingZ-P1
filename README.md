@@ -10,12 +10,12 @@ Nov 15 2021 Arlington .NET / Richard Hawkins, Nick Escalona
 * display details of an order √
 * display all order history of a store location √
 * display all order history of a customer √
-* input validation (in the console app and also in the server)
-* exception handling, including foreseen SQL and HTTP errors
+* input validation (in the console app and also in the server) √
+* exception handling, including foreseen SQL and HTTP errors 
 * persistent data; no prices, customers, order history, etc. hardcoded in C# √
 * (recommended: asynchronous network & other I/O, at least on the REST API)
-* (optional: logging of exceptions and other events
-* (optional: order history can be sorted by earliest, latest, cheapest, most expensive)
+* (optional: logging of exceptions and other events √
+* (optional: order history can be sorted by earliest, latest √, cheapest, most expensive)
 * (optional: get a suggested order for a customer based on his order history)
 * (optional: display some statistics based on order history)
 
@@ -26,7 +26,7 @@ Nov 15 2021 Arlington .NET / Richard Hawkins, Nick Escalona
 * have a SQL script that can set up the database from scratch √
 * don't use public fields √
 * define and use at least one interface √
-* best practices: separation of concerns, OOP principles, SOLID, REST, HTTP
+* best practices: separation of concerns, OOP principles, SOLID, REST, HTTP √
 * XML documentation √
 
 ## My Database Diagram:
