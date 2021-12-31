@@ -24,6 +24,12 @@ namespace StoreApp.Api.Controllers
             return stores.ToList();
         }
 
-        // GET
+        // GET api/store/{id}
+        [HttpGet("id")]
+        public async Task<IEnumerable<Product>> GetStoreProducts(string id)
+        {
+            IEnumerable<Product> products = await _repository.GetStoreProductsAsync(id);
+            return products.ToList();
+        }
     }
 }
