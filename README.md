@@ -1,4 +1,4 @@
-# JingZ-P1: Welcome to My Project 1 Repo.
+# Welcome to My Project 1 Repo.
 # project 1: store web application
 Nov 15 2021 Arlington .NET / Richard Hawkins, Nick Escalona
 
