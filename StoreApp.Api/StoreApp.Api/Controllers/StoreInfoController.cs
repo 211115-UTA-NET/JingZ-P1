@@ -19,15 +19,11 @@ namespace StoreApp.Api.Controllers
         [HttpGet]
         public async Task<IEnumerable<Location>> GetStoreLocations()
         {
-            IEnumerable<Location> stores;
-            try
-            {
-                stores = await _repository.GetLocationList();
-            }
-            catch(SqlException)
-            {
+            IEnumerable<Location> stores = await _repository.GetLocationListAsync();
 
-            }
+            return stores.ToList();
         }
+
+        // GET
     }
 }

@@ -32,11 +32,11 @@ namespace StoreApi.DataStorage
         /// <param name="paramName">parameter name in your query (ex. "...WHERE ID = @id" paramName = "id")</param>
         /// <param name="inputVal">the value for the query search condition</param>
         /// <returns>DataSet type</returns>
-        private DataSet DBReadOnly(string? query, string[]? paramName = null, object[]? inputVal = null)
+        private async Task<DataSet> DBReadOnly(string? query, string[]? paramName = null, object[]? inputVal = null)
         {
             // open connection
             using SqlConnection connection = new(_connectionString);
-            connection.Open();
+            await connection.OpenAsync();
             using SqlCommand command = new(query, connection);
             // prevent sql injection
             if (paramName != null && inputVal != null)
@@ -50,9 +50,9 @@ namespace StoreApi.DataStorage
             using SqlDataAdapter adapter = new(command);
             DataSet dataSet = new();
             // execute the command
-            adapter.Fill(dataSet);
+            await Task.Run(() => adapter.Fill(dataSet));
             // close the connection
-            connection.Close();
+            await connection.CloseAsync();
             return dataSet;
         }
 
@@ -65,11 +65,11 @@ namespace StoreApi.DataStorage
         /// <param name="paramName">parameter name in your query (ex. "...WHERE ID = @id" paramName = "id")</param>
         /// <param name="inputVal">the value for the query search condition</param>
         /// <returns>Number of rows affected by the insertion</returns>
-        private int DBWriteOnly(string? query, string[]? paramName = null, object[]? inputVal = null)
+        private async Task<int> DBWriteOnly(string? query, string[]? paramName = null, object[]? inputVal = null)
         {
             // open connection
             using SqlConnection connection = new(_connectionString);
-            connection.Open();
+            await connection.OpenAsync();
             using SqlCommand command = new(query, connection);
             // prevent sql injection
             if (paramName != null && inputVal != null)
@@ -80,9 +80,9 @@ namespace StoreApi.DataStorage
                 }
             }
             // execute the command
-            int rowsAffected = command.ExecuteNonQuery();
+            int rowsAffected = await command.ExecuteNonQueryAsync();
             // close the connection
-            connection.Close();
+            await connection.CloseAsync();
             return rowsAffected;
         }
 
@@ -90,10 +90,10 @@ namespace StoreApi.DataStorage
         ///     Get location List from database
         /// </summary>
         /// <returns>A Location class type collection</returns>
-        public IEnumerable<Location> GetLocationList()
+        public async Task<IEnumerable<Location>> GetLocationListAsync()
         {
             List<Location> result = new();
-            DataSet dataSet = DBReadOnly("SELECT * FROM Location");
+            DataSet dataSet = await DBReadOnly("SELECT * FROM Location");
             foreach (DataRow row in dataSet.Tables[0].Rows)
             {
                 result.Add(new((int)row["ID"], (string)row["StoreLocation"]));
@@ -106,13 +106,13 @@ namespace StoreApi.DataStorage
         /// </summary>
         /// <param name="locationID">location id</param>
         /// <returns>A Product class type collection</returns>
-        public IEnumerable<Product> GetStoreProducts(string locationID)
+        public async Task<IEnumerable<Product>> GetStoreProductsAsync(string locationID)
         {
             List<Product> result = new();
             bool isInt = int.TryParse(locationID, out int locId);
             if (isInt)
             {
-                DataSet dataSet = DBReadOnly("SELECT ProductName, Price FROM StoreInventory WHERE LocationID = @locID ORDER BY Price",
+                DataSet dataSet = await DBReadOnly("SELECT ProductName, Price FROM StoreInventory WHERE LocationID = @locID ORDER BY Price",
                     new string[] { "locID" },
                     new object[] { locId });
                 foreach(DataRow row in dataSet.Tables[0].Rows)
@@ -131,14 +131,14 @@ namespace StoreApi.DataStorage
         /// <param name="firstName">customer first name</param>
         /// <param name="lastName">customer last name</param>
         /// <returns>A cutomer id, if return -1 means failed the customer insertion.</returns>
-        public int AddNewCustomer(string firstName, string lastName)
+        public async Task<int> AddNewCustomerAsync(string firstName, string lastName)
         {
-            int result = DBWriteOnly("INSERT Customer VALUES (@firstName, @lastName);",
+            int result = await DBWriteOnly("INSERT Customer VALUES (@firstName, @lastName);",
                 new string[] { "firstName", "lastName" },
                 new object[] { firstName, lastName });
             if (result > 0)
             {
-                DataSet customerID = DBReadOnly("SELECT ID FROM Customer WHERE FirstName=@firstName AND LastName=@lastName",
+                DataSet customerID = await DBReadOnly("SELECT ID FROM Customer WHERE FirstName=@firstName AND LastName=@lastName",
                     new string[] { "firstName", "lastName" },
                     new object[] { firstName, lastName });
                 return (int)customerID.Tables[0].Rows[0]["ID"];
@@ -154,12 +154,12 @@ namespace StoreApi.DataStorage
         /// <param name="firstName">optional</param>
         /// <param name="lastName">optional</param>
         /// <returns>Customer informations</returns>
-        public IEnumerable<Customer> FindCustomer(string customerID, string firstName = "", string lastName = "")
+        public async Task<IEnumerable<Customer>> FindCustomerAsync(string customerID, string firstName = "", string lastName = "")
         {
             List<Customer> customer = new();
             bool isInt = int.TryParse(customerID, out int CustomerID);
             if (isInt) {
-                DataSet dataSet = DBReadOnly("SELECT * FROM Customer WHERE ID = @CustomerID;",
+                DataSet dataSet = await DBReadOnly("SELECT * FROM Customer WHERE ID = @CustomerID;",
                     new string[] { "CustomerID" },
                     new object[] { CustomerID });
                 foreach (DataRow row in dataSet.Tables[0].Rows)
@@ -168,7 +168,7 @@ namespace StoreApi.DataStorage
                 }
             } else if(!isInt && customerID.ToLower() == "forgot")
             {
-                DataSet dataSet = DBReadOnly("SELECT * FROM Customer WHERE FirstName=@firstName AND LastName=@lastName;",
+                DataSet dataSet = await DBReadOnly("SELECT * FROM Customer WHERE FirstName=@firstName AND LastName=@lastName;",
                     new string[] { "firstName", "lastName" },
                     new object[] { firstName, lastName });
                 foreach (DataRow row in dataSet.Tables[0].Rows)
@@ -185,9 +185,9 @@ namespace StoreApi.DataStorage
         /// <param name="productName">Valid product name</param>
         /// <param name="locationID">Valid location ID</param>
         /// <returns>The product amount in the local inventory.</returns>
-        public int InventoryAmount(string productName, int locationID)
+        public async Task<int> InventoryAmountAsync(string productName, int locationID)
         {
-            DataSet dataSet = DBReadOnly(
+            DataSet dataSet = await DBReadOnly(
                 "SELECT ProductAmount From StoreInventory WHERE LocationID = @locationID AND ProductName = @productName;",
                 new string[] { "locationID", "productName" },
                 new object[] { locationID, productName });
@@ -201,14 +201,14 @@ namespace StoreApi.DataStorage
         /// </summary>
         /// <param name="customerID">customer id</param>
         /// <returns>Order number of the new order</returns>
-        public int GetOrderNumber(int customerID)
+        public async Task<int> GetOrderNumberAsync(int customerID)
         {
-            int result = DBWriteOnly("INSERT CustomerOrder VALUES (@customerID)",
+            int result = await DBWriteOnly("INSERT CustomerOrder VALUES (@customerID)",
                 new string[] { "customerID" },
                 new object[] { customerID });
             if (result > 0)
             {
-                DataSet dataSet = DBReadOnly("SELECT MAX(OrderNum) AS OrderNum From CustomerOrder WHERE CustomerID = @customerID;",
+                DataSet dataSet = await DBReadOnly("SELECT MAX(OrderNum) AS OrderNum From CustomerOrder WHERE CustomerID = @customerID;",
                     new string[] { "customerID" },
                     new object[] { customerID });
                 return (int)dataSet.Tables[0].Rows[0]["OrderNum"];
@@ -221,17 +221,17 @@ namespace StoreApi.DataStorage
         /// </summary>
         /// <param name="order">Order type class</param>
         /// <returns>Summary of the insertion as receipt.</returns>
-        public IEnumerable<Order> AddOrder(List<Order> order)
+        public async Task<IEnumerable<Order>> AddOrderAsync(List<Order> order)
         {
             List<Order> receipt = new();
             foreach (Order orderProduct in order)
             {
                 // insert order product & update inventory amount
-                if (!InsertOrderProduct(orderProduct) || !UpdateInventoryAmount(orderProduct))
+                if (!await InsertOrderProductAsync(orderProduct) || !await UpdateInventoryAmountAsync(orderProduct))
                     break;
             }
             // all success return receipt
-            DataSet dataSet = DBReadOnly("SELECT OrderNum, ProductName, Amount, LocationID, OrderTime, StoreLocation " +
+            DataSet dataSet = await DBReadOnly("SELECT OrderNum, ProductName, Amount, LocationID, OrderTime, StoreLocation " +
                 "FROM OrderProduct, Location " +
                 "WHERE LocationID = Location.ID AND OrderNum = @orderNum;",
                     new string[] { "orderNum" },
@@ -244,9 +244,9 @@ namespace StoreApi.DataStorage
         /// </summary>
         /// <param name="order">Order class type</param>
         /// <returns>true if insert success, false otherwise.</returns>
-        private bool InsertOrderProduct(Order order)
+        private async Task<bool> InsertOrderProductAsync(Order order)
         {
-            int result = DBWriteOnly("INSERT OrderProduct (OrderNum, ProductName, Amount, LocationID) " +
+            int result = await DBWriteOnly("INSERT OrderProduct (OrderNum, ProductName, Amount, LocationID) " +
                 "VALUES (@orderNum, @productName, @amount, @locationID);",
                 new string[] { "orderNum", "productName", "amount", "locationID" },
                 new object[] { order.OrderNum, order.ProductName, order.ProductQty, order.LocationID });
@@ -260,13 +260,13 @@ namespace StoreApi.DataStorage
         /// </summary>
         /// <param name="order">Order class type</param>
         /// <returns>true if update success, false otherwise.</returns>
-        private bool UpdateInventoryAmount(Order order)
+        private async Task<bool> UpdateInventoryAmountAsync(Order order)
         {
             string query = "UPDATE StoreInventory " +
                 "SET ProductAmount = ProductAmount - @orderAmount " +
                 "WHERE LocationID = @locationID AND ProductName = @productName;";
 
-            int result = DBWriteOnly(query,
+            int result = await DBWriteOnly(query,
                 new string[] { "orderAmount", "locationID", "productName" },
                 new object[] { order.ProductQty, order.LocationID, order.ProductName });
             if (result > 0) return true;
@@ -278,12 +278,12 @@ namespace StoreApi.DataStorage
         /// </summary>
         /// <param name="order">Order class type</param>
         /// <returns>The product price</returns>
-        public List<decimal> GetPrice(List<Order> order)
+        public async Task<List<decimal>> GetPriceAsync(List<Order> order)
         {
             List<decimal> price = new();
             foreach (Order item in order)
             {
-                DataSet dataSet = DBReadOnly(
+                DataSet dataSet = await DBReadOnly(
                     "SELECT Price FROM StoreInventory WHERE LocationID = @locationID AND ProductName=@productName",
                     new string[] { "locationID", "productName" },
                     new object[] { item.LocationID, item.ProductName });
@@ -309,14 +309,14 @@ namespace StoreApi.DataStorage
         /// <param name="customerID"></param>
         /// <param name="locationID"></param>
         /// <returns>A Order class type collection that contains the order history</returns>
-        public IEnumerable<Order> GetLocationOrders(int customerID, int locationID)
+        public async Task<IEnumerable<Order>> GetLocationOrdersAsync(int customerID, int locationID)
         {
             string query = "SELECT OrderProduct.OrderNum, ProductName, Amount, LocationID, Location.StoreLocation, OrderTime " +
                 "FROM CustomerOrder " +
                 "INNER JOIN OrderProduct ON CustomerOrder.OrderNum = OrderProduct.OrderNum " +
                 "INNER JOIN Location ON LocationID = Location.ID " +
                 "WHERE CustomerID = @customerId AND LocationID = @locationId ORDER BY OrderProduct.OrderNum;";
-            DataSet dataSet = DBReadOnly(query,
+            DataSet dataSet = await DBReadOnly(query,
                  new string[] { "customerId", "locationId" },
                  new object[] { customerID, locationID });
             return AddOrderHistoryDatatoList(dataSet);
@@ -327,40 +327,40 @@ namespace StoreApi.DataStorage
         /// </summary>
         /// <param name="customerID"></param>
         /// <returns>A Order class type collection that contains the order history</returns>
-        public IEnumerable<Order> GetStoreOrders(int customerID)
+        public async Task<IEnumerable<Order>> GetStoreOrdersAsync(int customerID)
         {
             string query = "SELECT OrderProduct.OrderNum, ProductName, Amount, LocationID, Location.StoreLocation, OrderTime " +
                 "FROM CustomerOrder " +
                 "INNER JOIN OrderProduct ON CustomerOrder.OrderNum = OrderProduct.OrderNum " +
                 "INNER JOIN Location ON LocationID = Location.ID " +
                 "WHERE CustomerID = @customerId ORDER BY OrderProduct.OrderNum;";
-            DataSet dataSet = DBReadOnly(query,
+            DataSet dataSet = await DBReadOnly(query,
                  new string[] { "customerId" },
                  new object[] { customerID });
             return AddOrderHistoryDatatoList(dataSet);
         }
 
-        public IEnumerable<Order> GetMostRecentOrder(int customerID)
+        public async Task<IEnumerable<Order>> GetMostRecentOrderAsync(int customerID)
         {
             string query = "SELECT OrderProduct.OrderNum, ProductName, Amount, LocationID, Location.StoreLocation, OrderTime FROM CustomerOrder " +
                 "INNER JOIN OrderProduct ON CustomerOrder.OrderNum = OrderProduct.OrderNum " +
                 "INNER JOIN Location ON LocationID = Location.ID " +
                 "WHERE CustomerID = @customerID AND CustomerOrder.OrderNum " +
                 "= (SELECT MAX(OrderNum) AS OrderNum From CustomerOrder WHERE CustomerID = @customerID2);";
-            DataSet dataSet = DBReadOnly(query,
+            DataSet dataSet = await DBReadOnly(query,
                  new string[] { "customerID", "customerID2" },
                  new object[] { customerID, customerID });
             return AddOrderHistoryDatatoList(dataSet);
         }
 
-        public IEnumerable<Order> GetSpecificOrder(int customerID, int orderNum)
+        public async Task<IEnumerable<Order>> GetSpecificOrderAsync(int customerID, int orderNum)
         {
             string query = "SELECT OrderProduct.OrderNum, ProductName, Amount, LocationID, Location.StoreLocation, OrderTime " +
                 "FROM CustomerOrder " +
                 "INNER JOIN OrderProduct ON CustomerOrder.OrderNum = OrderProduct.OrderNum " +
                 "INNER JOIN Location ON LocationID = Location.ID " +
                 "WHERE CustomerID = @customerId AND CustomerOrder.OrderNum = @orderNum;";
-            DataSet dataSet = DBReadOnly(query,
+            DataSet dataSet = await DBReadOnly(query,
                  new string[] { "customerId", "orderNum" },
                  new object[] { customerID, orderNum });
             return AddOrderHistoryDatatoList(dataSet);

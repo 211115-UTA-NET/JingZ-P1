@@ -4,17 +4,17 @@ namespace StoreApi.DataStorage
 {
     public interface IRepository
     {
-        IEnumerable<Location> GetLocationList();
-        IEnumerable<Product> GetStoreProducts(string locationID);
-        int AddNewCustomer(string firstName, string lastName);
-        int InventoryAmount(string productName, int locationID);
-        int GetOrderNumber(int customerID);
-        IEnumerable<Order> AddOrder(List<Order> order);
-        List<decimal> GetPrice(List<Order> order);
-        IEnumerable<Customer> FindCustomer(string customerID, string firstName, string lastName);
-        IEnumerable<Order> GetLocationOrders(int customerID, int locationID);
-        IEnumerable<Order> GetStoreOrders(int customerID);
-        IEnumerable<Order> GetMostRecentOrder(int customerID);
-        IEnumerable<Order> GetSpecificOrder(int customerID, int orderNum);
+        Task<IEnumerable<Location>> GetLocationListAsync();
+        Task<IEnumerable<Product>> GetStoreProductsAsync(string locationID);
+        Task<int> AddNewCustomerAsync(string firstName, string lastName);
+        Task<int> InventoryAmountAsync(string productName, int locationID);
+        Task<int> GetOrderNumberAsync(int customerID);
+        Task<IEnumerable<Order>> AddOrderAsync(List<Order> order);
+        Task<List<decimal>> GetPriceAsync(List<Order> order);
+        Task<IEnumerable<Customer>> FindCustomerAsync(string customerID, string firstName, string lastName);
+        Task<IEnumerable<Order>> GetLocationOrdersAsync(int customerID, int locationID);
+        Task<IEnumerable<Order>> GetStoreOrdersAsync(int customerID);
+        Task<IEnumerable<Order>> GetMostRecentOrderAsync(int customerID);
+        Task<IEnumerable<Order>> GetSpecificOrderAsync(int customerID, int orderNum);
     }
 }
