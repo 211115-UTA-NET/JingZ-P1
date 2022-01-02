@@ -1,26 +1,28 @@
-﻿using StoreApp.DataInfrastructure;
+﻿
+using StoreConsoleApp.UI;
 
-namespace StoreApp.App
+namespace StoreConsoleApp.App
 {
     public class Program
     {
-        private static string connectionString = File.ReadAllText("D:/Study_Documents/Revature/Training/DBConnectionStrings/StoreDB.txt");
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             Console.WriteLine("[ Welcome to Stationery Shop ]\n");
-            // Connection to database
-            IRepository repository = new SqlRepository(connectionString);
-            OrderProcess orderProcess = new(repository);
+            // Connection to server
+            Uri server = new("https://localhost:7282");
+            //OrderProcessService orderProcess = new(server);
             bool exitShop = false;
             while (!exitShop)
             {
-                Store store = new(repository);
+                StoreService store = new(server);
                 // USER LOGIN SECTION
-                int CustomerID = CustomerLogin(store, out exitShop);
+                //int CustomerID = CustomerLogin(store, out exitShop);
                 if (exitShop) break;
                 // STORE INFORMATION SECTION
             StoreLocation:
-                int LocationID = StoreLocation(store, out exitShop);
+                var locationResults = await StoreLocationAsync(store);
+                int LocationID = locationResults.Item1;
+                exitShop = locationResults.Item2;
                 if (exitShop) break;
                 // MENU SECTION
             MenuSelection:
@@ -41,21 +43,23 @@ namespace StoreApp.App
                 {
                     // ORDERING SECTION
                     Console.WriteLine();
-                    Console.WriteLine(store.GetStoreProducts(LocationID + "", out bool validID));
-                    Ordering(store, LocationID, CustomerID, out exitShop);
+                    var productsResult = await store.GetStoreProductsAsync(LocationID + "");
+                    string storeProducts = productsResult.Item1;
+                    Console.WriteLine(storeProducts);
+                    //Ordering(store, LocationID, CustomerID, out exitShop);
                     if (exitShop) goto MenuSelection;
                 }
                 else if(menuSelection.Trim() == "2")
                 {
                     // display all order history of this store location
-                    Console.WriteLine(orderProcess.DisplayOrderHistory(CustomerID, out bool getHistoryFailed, LocationID));
-                    if(getHistoryFailed) goto MenuSelection;
+                    //Console.WriteLine(orderProcess.DisplayOrderHistory(CustomerID, out bool getHistoryFailed, LocationID));
+                    //if(getHistoryFailed) goto MenuSelection;
                 }
                 else if(menuSelection.Trim() == "3")
                 {
                     // display all order history of Stationery Shop
-                    Console.WriteLine(orderProcess.DisplayOrderHistory(CustomerID, out bool getHistoryFailed));
-                    if (getHistoryFailed) goto MenuSelection;
+                    //Console.WriteLine(orderProcess.DisplayOrderHistory(CustomerID, out bool getHistoryFailed));
+                    //if (getHistoryFailed) goto MenuSelection;
                 }
                 else if(menuSelection.Trim() == "4")
                 {
@@ -71,8 +75,8 @@ namespace StoreApp.App
                         goto SearchOrder; 
                     }
                     // display most recent/specific order of the customer depend on user input
-                    Console.WriteLine(orderProcess.DisplayOrderHistory(CustomerID, out bool getHistoryFailed, -1, orderNum));
-                    if (getHistoryFailed) goto MenuSelection;
+                    //Console.WriteLine(orderProcess.DisplayOrderHistory(CustomerID, out bool getHistoryFailed, -1, orderNum));
+                    //if (getHistoryFailed) goto MenuSelection;
                 }
                 else
                 {
@@ -92,7 +96,7 @@ namespace StoreApp.App
                 }
             }
         }
-
+        /*
         /// <summary>
         ///     Customer login section. 
         ///     If user is new customer, then create a new account and print the customer ID to user. 
@@ -101,7 +105,7 @@ namespace StoreApp.App
         /// <param name="store">A Store type class</param>
         /// <param name="exit">A boolean that checks if user want to exit the shop</param>
         /// <returns>int Customer ID</returns>
-        public static int CustomerLogin(Store store, out bool exit)
+        public static int CustomerLogin(StoreService store, out bool exit)
         {
         NewCustomer:
             int CustomerID = -1;    // initialize
@@ -156,7 +160,7 @@ namespace StoreApp.App
                 if (CheckEmptyInput(lastName, out lastName)) goto CreateAccount;
 
                 // create account
-                CustomerID = store.CreateAccount(firstName, lastName);
+                //CustomerID = store.CreateAccount(firstName, lastName);
                 if (CustomerID < 0)
                 {
                     Console.WriteLine("Something When Wrong... Please Try Again.\n");
@@ -175,7 +179,7 @@ namespace StoreApp.App
             }
             return CustomerID;
         }
-
+        */
         /// <summary>
         ///     Store Information section.
         ///     Print all the store location and ask user to pick a choice.
@@ -184,10 +188,11 @@ namespace StoreApp.App
         /// <param name="store">A Store type class</param>
         /// <param name="exit">A boolean that checks if user want to exit the shop</param>
         /// <returns>The location ID that User selected</returns>
-        public static int StoreLocation(Store store, out bool exit)
+        public static async Task<(int, bool)> StoreLocationAsync(StoreService store)
         {
         StoreLocations:
-            Console.WriteLine(store.GetLocations());    // print store locations
+            bool exit;
+            Console.WriteLine(await store.GetLocationsAsync());    // print store locations
             Console.WriteLine("Which store location do you want to shop today? ");
             Console.Write("Enter an ID number or Enter EXIT for Exit this Shop: ");
             string? locationID = Console.ReadLine();
@@ -195,21 +200,22 @@ namespace StoreApp.App
             if (CheckEmptyInput(locationID, out locationID)) goto StoreLocations;
 
             exit = ExitShop(locationID); // if user want exit shop
-            if (exit) return -1;
+            if (exit) return (-1, exit);
             // Print store products and get product list
-            string tmp = store.GetStoreProducts(locationID, out bool validID);
+            var tmp = await store.GetStoreProductsAsync(locationID);
+            bool validID = tmp.Item2;
             // invalidID go back to the top and try again
             if (!validID) goto StoreLocations;
-            return int.Parse(locationID);
+            return (int.Parse(locationID), exit);
         }
-
+        /*
         /// <summary>
         ///     Ordering ask user to select products and quantity repeatedly 
         ///     until user want to checkout.
         /// </summary>
         /// <param name="store">Store type class</param>
         /// <param name="locationID">Location ID</param>
-        public static void Ordering(Store store, int locationID, int customerID, out bool exit)
+        public static void Ordering(StoreService store, int locationID, int customerID, out bool exit)
         {
             List<String> productNames = new();
             List<int> productQty = new();
@@ -297,7 +303,7 @@ namespace StoreApp.App
                 }
             }
         }
-
+        */
         /// <summary>
         ///     Printing empty input error message.
         /// </summary>

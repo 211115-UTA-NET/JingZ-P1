@@ -1,20 +1,19 @@
-﻿using StoreApp.DataInfrastructure;
-using StoreApp.Logic;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StoreApp.App
+namespace StoreConsoleApp.UI
 {
-    public class OrderProcess
+    public class OrderProcessService : IStoreService
     {
-        private readonly IRepository _repository;
-        public OrderProcess(IRepository repository)
+        private readonly HttpClient _httpClient = new();
+        public OrderProcessService(Uri serverUri)
         {
-            _repository = repository;
+            _httpClient.BaseAddress = serverUri;
         }
+        /*
         /// <summary>
         ///     Used to display the order detail when a user palced an order. 
         ///     Process include insert order information to database then display the result.
@@ -64,7 +63,8 @@ namespace StoreApp.App
             }
             return receipt.ToString();
         }
-
+        */
+        /*
         /// <summary>
         ///     Used to display order history. Process params value to get the information back.
         ///     If locationID param is provided then it will return order history of the user in current store location.
@@ -146,7 +146,8 @@ namespace StoreApp.App
             }
             return orderHistory.ToString();
         }
-
+        */
+        /*
         /// <summary>
         ///     A display format for the order history.
         /// </summary>
@@ -185,6 +186,7 @@ namespace StoreApp.App
             format.AppendLine($"Total Price: ${totalPrice}\n");
             return format.ToString();
         }
+        */
 
         /// <summary>
         ///     Used in DisplayOrderDetail() method.
@@ -192,14 +194,14 @@ namespace StoreApp.App
         /// </summary>
         /// <param name="order">Order type list</param>
         /// <returns>Inserted order information</returns>
-        private IEnumerable<Order> ProcessOrder(List<Order> order)
-        {
-            /*
-             * Ex:
-             * INSERT OrderProduct (OrderNum, ProductName, Amount, LocationID) VALUES (2,'Masking Tape', 5, 3);
-             */
-            IEnumerable<Order> allRecords = _repository.AddOrder(order);
-            return allRecords;
-        }
+        //private IEnumerable<Order> ProcessOrder(List<Order> order)
+        //{
+        //    /*
+        //     * Ex:
+        //     * INSERT OrderProduct (OrderNum, ProductName, Amount, LocationID) VALUES (2,'Masking Tape', 5, 3);
+        //     */
+        //    IEnumerable<Order> allRecords = _repository.AddOrder(order);
+        //    return allRecords;
+        //}
     }
 }
