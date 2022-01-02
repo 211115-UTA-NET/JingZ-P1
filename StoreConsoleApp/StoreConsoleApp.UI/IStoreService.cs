@@ -3,6 +3,6 @@
     public interface IStoreService
     {
         public Task<string> GetLocationsAsync();
-        public Task<(string, bool)> GetStoreProductsAsync(string locationID)
+        public Task<(string, bool)> GetStoreProductsAsync(string locationID);
     }
 }
