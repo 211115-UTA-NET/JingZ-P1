@@ -8,15 +8,13 @@ namespace StoreConsoleApp.App
         public static async Task Main(string[] args)
         {
             Console.WriteLine("[ Welcome to Stationery Shop ]\n");
-            // Connection to server
-            Uri server = new("https://localhost:7282");
             //OrderProcessService orderProcess = new(server);
             bool exitShop = false;
             while (!exitShop)
             {
-                StoreService store = new(server);
+                StoreService store = new();
                 // USER LOGIN SECTION
-                //int CustomerID = CustomerLogin(store, out exitShop);
+                int CustomerID = CustomerLogin(store, out exitShop);
                 if (exitShop) break;
                 // STORE INFORMATION SECTION
             StoreLocation:
@@ -96,7 +94,7 @@ namespace StoreConsoleApp.App
                 }
             }
         }
-        /*
+        
         /// <summary>
         ///     Customer login section. 
         ///     If user is new customer, then create a new account and print the customer ID to user. 
@@ -160,7 +158,7 @@ namespace StoreConsoleApp.App
                 if (CheckEmptyInput(lastName, out lastName)) goto CreateAccount;
 
                 // create account
-                //CustomerID = store.CreateAccount(firstName, lastName);
+                CustomerID = store.CreateAccount(firstName, lastName);
                 if (CustomerID < 0)
                 {
                     Console.WriteLine("Something When Wrong... Please Try Again.\n");
@@ -179,7 +177,7 @@ namespace StoreConsoleApp.App
             }
             return CustomerID;
         }
-        */
+        
         /// <summary>
         ///     Store Information section.
         ///     Print all the store location and ask user to pick a choice.

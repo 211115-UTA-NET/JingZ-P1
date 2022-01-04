@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StoreConsoleApp.UI
 {
-    public class OrderProcessService : IStoreService
+    public class OrderProcessService
     {
         private readonly HttpClient _httpClient = new();
         public OrderProcessService(Uri serverUri)

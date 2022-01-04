@@ -7,47 +7,25 @@ using System.Text;
 
 namespace StoreConsoleApp.UI
 {
-    public class StoreService : IStoreService
+    public class StoreService
     {
-        private readonly HttpClient _httpClient = new();
         /// <summary>
         ///     store the displayed product list of the store location.
         /// </summary>
         private List<string> ProductList;
-        public StoreService(Uri serverUri)
+        RequestServices service = new();
+        public StoreService()
         {
             ProductList = new();
-            _httpClient.BaseAddress = serverUri;
         }
-        private async Task<HttpResponseMessage> GetResponseMessageAsync(string requestUri)
-        {
-            HttpRequestMessage request = new(HttpMethod.Get, requestUri);
-            // expect application/json reply. ("content negotiation" in http/rest)
-            request.Headers.Accept.Add(new(MediaTypeNames.Application.Json));
-            HttpResponseMessage response;
-            try
-            {
-                response = await _httpClient.SendAsync(request);
-            }
-            catch (HttpRequestException ex)
-            {
-                throw new UnexpectedServerBehaviorException("network error", ex);
-            }
-            response.EnsureSuccessStatusCode();
-            // if response is not json format
-            if (response.Content.Headers.ContentType?.MediaType != MediaTypeNames.Application.Json)
-            {
-                throw new UnexpectedServerBehaviorException();
-            }
-            return response;
-        }
+
         /// <summary>
         ///     Get location id and store location from database
         /// </summary>
         /// <returns>A string of formated store location list</returns>
         public async Task<string> GetLocationsAsync()
         {
-            HttpResponseMessage response = await GetResponseMessageAsync("/api/storeinfo");
+            HttpResponseMessage response = await service.GetResponseMessageAsync("/api/storeinfo");
 
             // store response in dto
             var allRecords = await response.Content.ReadFromJsonAsync<List<Location>>();
@@ -79,7 +57,7 @@ namespace StoreConsoleApp.UI
             ProductList = new();
             bool validID;
             string requestUri = $"/api/storeinfo/{locationID}";
-            HttpResponseMessage response = await GetResponseMessageAsync(requestUri);
+            HttpResponseMessage response = await service.GetResponseMessageAsync(requestUri);
 
             var allRecords = await response.Content.ReadFromJsonAsync<List<Product>>();
             var products = new StringBuilder();
