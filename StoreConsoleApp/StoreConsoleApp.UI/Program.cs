@@ -14,7 +14,9 @@ namespace StoreConsoleApp.App
             {
                 StoreService store = new();
                 // USER LOGIN SECTION
-                int CustomerID = CustomerLogin(store, out exitShop);
+                var login = await CustomerLoginAsync(store);
+                int CustomerID = login.Item1;
+                exitShop = login.Item2;
                 if (exitShop) break;
                 // STORE INFORMATION SECTION
             StoreLocation:
@@ -103,9 +105,10 @@ namespace StoreConsoleApp.App
         /// <param name="store">A Store type class</param>
         /// <param name="exit">A boolean that checks if user want to exit the shop</param>
         /// <returns>int Customer ID</returns>
-        public static int CustomerLogin(StoreService store, out bool exit)
+        public static async Task<(int, bool)> CustomerLoginAsync(StoreService store)
         {
         NewCustomer:
+            bool exit;
             int CustomerID = -1;    // initialize
             Console.Write("Before you start shopping, are you a new customer? (y/n) ");
             string? input = Console.ReadLine();
@@ -113,7 +116,7 @@ namespace StoreConsoleApp.App
             if (CheckEmptyInput(input, out input)) goto NewCustomer;
 
             exit = ExitShop(input); // if user want exit shop
-            if (exit) return CustomerID;
+            if (exit) return (CustomerID, exit);
             // if not a new customer, login account
             if (input.ToLower() == "n")
             {
@@ -134,12 +137,15 @@ namespace StoreConsoleApp.App
                     string? lastName = Console.ReadLine();
                     // check if lastname is null/empty
                     if (CheckEmptyInput(lastName, out lastName)) goto Login;
-                    customerExist = store.SearchCustomer(customerID, out CustomerID, firstName, lastName);
+                    var searchedCustomer = await store.SearchCustomerAsync(customerID, firstName, lastName);
+                    customerExist = searchedCustomer.Item1;
+                    CustomerID = searchedCustomer.Item2;
                     if (!customerExist) goto NewCustomer;
                 }
                 else
                 {
-                    customerExist = store.SearchCustomer(customerID, out CustomerID);
+                    var searchedCustomer = await store.SearchCustomerAsync(customerID);
+                    customerExist = searchedCustomer.Item1;
                     if (!customerExist) goto NewCustomer;
                 }
             }
@@ -158,7 +164,7 @@ namespace StoreConsoleApp.App
                 if (CheckEmptyInput(lastName, out lastName)) goto CreateAccount;
 
                 // create account
-                CustomerID = store.CreateAccount(firstName, lastName);
+                //CustomerID = store.CreateAccount(firstName, lastName);
                 if (CustomerID < 0)
                 {
                     Console.WriteLine("Something When Wrong... Please Try Again.\n");
@@ -175,7 +181,7 @@ namespace StoreConsoleApp.App
                 InvalidInputMsg();
                 goto NewCustomer;
             }
-            return CustomerID;
+            return (CustomerID, exit);
         }
         
         /// <summary>
@@ -334,7 +340,7 @@ namespace StoreConsoleApp.App
         /// <returns>true if user want to exit store. false otherwise.</returns>
         public static bool ExitShop(string userInput)
         {
-            if (userInput.ToLower() == "exit")
+            if (userInput.ToLower().Trim() == "exit")
             {
                 Console.WriteLine("\n--- Thank You and Bye. Looking forward your next visit! ---\n");
                 return true;

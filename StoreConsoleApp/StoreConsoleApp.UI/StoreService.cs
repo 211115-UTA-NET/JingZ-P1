@@ -103,27 +103,29 @@ namespace StoreConsoleApp.UI
         ///     else will search by CustomerID.
         /// </summary>
         /// <param name="customerID">customer ID</param>
-        /// <param name="CustomerID">return valid customer ID for who login using name</param>
         /// <param name="firstName">customer first name</param>
         /// <param name="lastName">customer last name</param>
-        /// <returns>true if customer exists, false otherwise.</returns>
-        //public bool SearchCustomer(string customerID, out int CustomerID, string firstName ="", string lastName="")
-        //{
-        //    IEnumerable<Customer> customer = _repository.FindCustomer(customerID, firstName, lastName);
-        //    CustomerID = -1;  // for out param
-        //    if (customer == null || !customer.Any())
-        //    {
-        //        Console.WriteLine("--- Account Not Found. Please Try Again. ---");
-        //        return false;
-        //    }
-        //    foreach (var existCustomer in customer)
-        //    {
-        //        Console.WriteLine($"\nWelcome Back! {existCustomer.FirstName} {existCustomer.LastName}.\n" +
-        //            $"Please Remember Your Customer ID#: {existCustomer.CustomerID}\n");
-        //        CustomerID = existCustomer.CustomerID;
-        //    }
-        //    return true;
-        //}
+        /// <returns>true if customer exists, false otherwise. And customer id</returns>
+        public async Task<(bool, int)> SearchCustomerAsync(string customerID, string firstName = "", string lastName = "")
+        {
+            Dictionary<string, string> query = new() { ["CustomerID"] = customerID, ["LastName"] = lastName, ["FirstName"] = firstName };
+            string requestUri = QueryHelpers.AddQueryString("api/customer/login", query);
+            var response = await service.GetResponseMessageAsync(requestUri);
+            var customer = await response.Content.ReadFromJsonAsync<List<Customer>>();
+            int CustomerID = -1;  //second return value
+            if (customer == null || !customer.Any())
+            {
+                Console.WriteLine("--- Account Not Found. Please Try Again. ---");
+                return (false, CustomerID);
+            }
+            foreach (var existCustomer in customer)
+            {
+                Console.WriteLine($"\nWelcome Back! {existCustomer.FirstName} {existCustomer.LastName}.\n" +
+                    $"Please Remember Your Customer ID#: {existCustomer.CustomerID}\n");
+                CustomerID = existCustomer.CustomerID;
+            }
+            return (true, CustomerID);
+        }
 
         /// <summary>
         ///     Check is product name exists in the ProductList using productID as index.
