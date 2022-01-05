@@ -7,14 +7,14 @@ using System.Text;
 
 namespace StoreConsoleApp.UI
 {
-    public class StoreService
+    public class Store
     {
         /// <summary>
         ///     store the displayed product list of the store location.
         /// </summary>
         private List<string> ProductList;
         RequestServices service = new();
-        public StoreService()
+        public Store()
         {
             ProductList = new();
         }
@@ -25,7 +25,7 @@ namespace StoreConsoleApp.UI
         /// <returns>A string of formated store location list</returns>
         public async Task<string> GetLocationsAsync()
         {
-            HttpResponseMessage response = await service.GetResponseMessageAsync("/api/storeinfo");
+            HttpResponseMessage response = await service.GetResponseAsync("/api/storeinfo");
 
             // store response in dto
             var allRecords = await response.Content.ReadFromJsonAsync<List<Location>>();
@@ -57,7 +57,7 @@ namespace StoreConsoleApp.UI
             ProductList = new();
             bool validID;
             string requestUri = $"/api/storeinfo/{locationID}";
-            HttpResponseMessage response = await service.GetResponseMessageAsync(requestUri);
+            HttpResponseMessage response = await service.GetResponseAsync(requestUri);
 
             var allRecords = await response.Content.ReadFromJsonAsync<List<Product>>();
             var products = new StringBuilder();
@@ -91,11 +91,17 @@ namespace StoreConsoleApp.UI
         /// <param name="firstName">new customer first name</param>
         /// <param name="lastName">new customer last name</param>
         /// <returns>Customer ID</returns>
-        //public int CreateAccount(string firstName, string lastName)
-        //{
-        //    int CustomerID = _repository.AddNewCustomer(firstName, lastName);
-        //    return CustomerID;
-        //}
+        public async Task<int> CreateAccount(string firstName, string lastName)
+        {
+            CustomerName customerName = new()
+            {
+                firstName = firstName,
+                lastName = lastName
+            };
+            var response = await service.GetResponseForAddCustomerAsync(customerName);
+            int CustomerID = await response.Content.ReadFromJsonAsync<int>();
+            return CustomerID;
+        }
 
         /// <summary>
         ///     Search customer by customer ID or customer name.
@@ -109,8 +115,8 @@ namespace StoreConsoleApp.UI
         public async Task<(bool, int)> SearchCustomerAsync(string customerID, string firstName = "", string lastName = "")
         {
             Dictionary<string, string> query = new() { ["CustomerID"] = customerID, ["LastName"] = lastName, ["FirstName"] = firstName };
-            string requestUri = QueryHelpers.AddQueryString("api/customer/login", query);
-            var response = await service.GetResponseMessageAsync(requestUri);
+            string requestUri = QueryHelpers.AddQueryString("/api/customer/login", query);
+            var response = await service.GetResponseAsync(requestUri);
             var customer = await response.Content.ReadFromJsonAsync<List<Customer>>();
             int CustomerID = -1;  //second return value
             if (customer == null || !customer.Any())

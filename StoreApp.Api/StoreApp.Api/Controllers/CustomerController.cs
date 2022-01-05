@@ -21,13 +21,14 @@ namespace StoreApp.Api.Controllers
 
         // POST api/customer
         [HttpPost]
-        public async Task<ActionResult<int>> CreateAccount(string firstName, string lastName)
+        public async Task<ActionResult<int>> CreateAccount(CustomerName customerName)
         {
-            int id = -1;
+            int id;
+            _logger.LogInformation("Create Account Called");
             try
             {
-                _logger.LogInformation("*** [POST] Add customer: {firstName} {lastName} ***", firstName, lastName);
-                id = await _repository.AddNewCustomerAsync(firstName, lastName);
+                _logger.LogInformation("*** [POST] Add customer: {firstName} {lastName} ***", customerName.firstName, customerName.lastName);
+                id = await _repository.AddNewCustomerAsync(customerName.firstName!, customerName.lastName!);
             } catch (SqlException ex)
             {
                 _logger.LogError(ex, "*** SQL ERROR! Unable to [POST] Add customer... ***");

@@ -2,6 +2,6 @@
 {
     public interface IRequestServices
     {
-        public Task<HttpResponseMessage> GetResponseMessageAsync(string requestUri);
+        public Task<HttpResponseMessage> GetResponseAsync(string requestUri);
     }
 }

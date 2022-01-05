@@ -12,7 +12,7 @@ namespace StoreConsoleApp.App
             bool exitShop = false;
             while (!exitShop)
             {
-                StoreService store = new();
+                Store store = new();
                 // USER LOGIN SECTION
                 var login = await CustomerLoginAsync(store);
                 int CustomerID = login.Item1;
@@ -105,7 +105,7 @@ namespace StoreConsoleApp.App
         /// <param name="store">A Store type class</param>
         /// <param name="exit">A boolean that checks if user want to exit the shop</param>
         /// <returns>int Customer ID</returns>
-        public static async Task<(int, bool)> CustomerLoginAsync(StoreService store)
+        public static async Task<(int, bool)> CustomerLoginAsync(Store store)
         {
         NewCustomer:
             bool exit;
@@ -164,7 +164,7 @@ namespace StoreConsoleApp.App
                 if (CheckEmptyInput(lastName, out lastName)) goto CreateAccount;
 
                 // create account
-                //CustomerID = store.CreateAccount(firstName, lastName);
+                CustomerID = await store.CreateAccount(firstName, lastName);
                 if (CustomerID < 0)
                 {
                     Console.WriteLine("Something When Wrong... Please Try Again.\n");
@@ -192,7 +192,7 @@ namespace StoreConsoleApp.App
         /// <param name="store">A Store type class</param>
         /// <param name="exit">A boolean that checks if user want to exit the shop</param>
         /// <returns>The location ID that User selected</returns>
-        public static async Task<(int, bool)> StoreLocationAsync(StoreService store)
+        public static async Task<(int, bool)> StoreLocationAsync(Store store)
         {
         StoreLocations:
             bool exit;

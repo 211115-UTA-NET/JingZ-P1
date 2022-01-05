@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace StoreConsoleApp.UI
 {
-    public class OrderProcessService
+    public class OrderProcess
     {
         private readonly HttpClient _httpClient = new();
-        public OrderProcessService(Uri serverUri)
+        public OrderProcess(Uri serverUri)
         {
             _httpClient.BaseAddress = serverUri;
         }

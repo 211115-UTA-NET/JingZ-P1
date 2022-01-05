@@ -7,12 +7,9 @@
 
 
 // customer api
-/api/customer/{id}
-    GET - find customer by id
-	// what about search customer by name?
-	// take id as string so -> can be id/name
-	// or just use query:
-/api/customer/?customerid={id} || ?firstname={...}&lastname={...}
+// login use query:
+/api/customer/login?customerid={id/forgot}&firstname={...}&lastname={...}
+	GET - find customer by id
 	
 /api/customer
 	POST - Add customer first&last name
