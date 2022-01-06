@@ -28,12 +28,12 @@
         /// <summary>
         ///     store order time from 'OrderProduct' db table or user input
         /// </summary>
-        public string? OrderTime { get; }
+        public string OrderTime { get; }
         /// <summary>
         ///     Optional field. Use to save store location from 'OrderProduct' db table
         /// </summary>
         public string Location {get;}
-        public Order(int orderNum, string productName, int productQty, int locationID, string? date, string loaction = "")
+        public Order(int orderNum, string productName, int productQty, int locationID, string date = "", string loaction = "")
         {
             OrderNum = orderNum;
             ProductName = productName;

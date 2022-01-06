@@ -75,7 +75,8 @@ namespace StoreConsoleApp.UI
             HttpRequestMessage request = new(HttpMethod.Post, "/api/order");
             OrderList list = new();
             list.orderlist = orders;
-            request.Content = new StringContent(JsonSerializer.Serialize(list), Encoding.UTF8, MediaTypeNames.Application.Json);
+            var json = JsonSerializer.Serialize(list);
+            request.Content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
             HttpResponseMessage response;
             try
             {

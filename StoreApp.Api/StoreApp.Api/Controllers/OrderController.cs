@@ -4,7 +4,6 @@ using StoreApi.DataStorage;
 using StoreApi.Logic;
 using StoreApp.Api.Dtos;
 using System.ComponentModel.DataAnnotations;
-using System.Net.Mime;
 
 namespace StoreApp.Api.Controllers
 {
@@ -28,6 +27,7 @@ namespace StoreApp.Api.Controllers
             List<Order> orderList = new();
             foreach(OrderInfo order in orders.orderlist!)
             {
+                _logger.LogInformation("Order added to list");
                 orderList.Add(new(order.OrderNum, order.ProductName!, order.ProductQty, order.LocationID, order.OrderTime));
             }
             try
@@ -49,8 +49,8 @@ namespace StoreApp.Api.Controllers
         /// </summary>
         /// <param name="customerID"></param>
         /// <returns></returns>
-        // GET api/order?customerID={id}
-        [HttpGet("id")]
+        // GET api/order/ordernum?customerID={id}
+        [HttpGet("ordernum")]
         public async Task<ActionResult<int>> GetOrderNumberAsync([FromQuery, Required] string customerID)
         {
             int orderNum;

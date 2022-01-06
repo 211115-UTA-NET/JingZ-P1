@@ -146,6 +146,7 @@ namespace StoreConsoleApp.App
                 {
                     var searchedCustomer = await store.SearchCustomerAsync(customerID);
                     customerExist = searchedCustomer.Item1;
+                    CustomerID = searchedCustomer.Item2;
                     if (!customerExist) goto NewCustomer;
                 }
             }

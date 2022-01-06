@@ -21,7 +21,7 @@
 	POST - Add order: List<Order> class type
 	resource link: https://entityframeworkcore.com/knowledge-base/55175457/how-to-post-list-of-object-in-asp-net-core-web-api
 	
-/api/order?customerID={id}
+/api/order/ordernum?customerID={id}
 	GET - get order number of the recent placed order
 	
 /api/order?List<Order>

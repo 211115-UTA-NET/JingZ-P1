@@ -32,7 +32,7 @@ namespace StoreConsoleApp.UI
             //}
             var receipt = new StringBuilder();
             Dictionary<string, string> query = new() { ["customerID"] = customerID+"" };
-            string requestUri = QueryHelpers.AddQueryString("/api/order", query);
+            string requestUri = QueryHelpers.AddQueryString("/api/order/ordernum", query);
             var response = await service.GetResponseAsync(requestUri);
             int orderNumber = await response.Content.ReadFromJsonAsync<int>();
             List<Order> order = new();
@@ -47,7 +47,13 @@ namespace StoreConsoleApp.UI
                 for (int i = 0; i < productNames.Count; i++)
                 {
                     // price does not matters here
-                    order.Add(new(orderNumber, productNames[i], productQty[i], locationID, null));
+                    order.Add(new()
+                    {
+                        OrderNum = orderNumber,
+                        ProductName = productNames[i],
+                        ProductQty = productQty[i],
+                        LocationID = locationID
+                    });
                 }
                 // add order to database, return summary
                 IEnumerable<Order> allRecords = await ProcessOrder(order);

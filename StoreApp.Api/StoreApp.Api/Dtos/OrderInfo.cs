@@ -27,12 +27,10 @@ namespace StoreApp.Api.Dtos
         /// <summary>
         ///     store order time from 'OrderProduct' db table or user input
         /// </summary>
-        [Required]
         public string? OrderTime { get; set; } = "";
         /// <summary>
         ///     Optional field. Use to save store location from 'OrderProduct' db table
         /// </summary>
-        [Required]
         public string Location { get; set; } = "";
     }
 }
