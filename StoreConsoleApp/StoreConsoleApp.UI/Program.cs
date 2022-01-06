@@ -271,7 +271,7 @@ namespace StoreConsoleApp.App
                         {
                             // display the shopping list
                             OrderProcess orderProcess = new();
-                            var orderDetail = await orderProcess.DisplayOrderDetail(customerID, productNames, productQty, locationID);
+                            var orderDetail = await orderProcess.DisplayOrderDetail(store, customerID, productNames, productQty, locationID);
                             string receipt = orderDetail.Item1;
                             bool Processfailed = orderDetail.Item2;
                             if (Processfailed) goto Ordering;

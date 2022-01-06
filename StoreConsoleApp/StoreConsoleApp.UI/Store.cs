@@ -13,7 +13,7 @@ namespace StoreConsoleApp.UI
         /// <summary>
         ///     store the displayed product list of the store location.
         /// </summary>
-        private List<string> ProductList;
+        private List<Product> ProductList;
         RequestServices service = new();
         public Store()
         {
@@ -76,7 +76,7 @@ namespace StoreConsoleApp.UI
                 foreach (var record in allRecords)
                 {
                     // store ProductName
-                    ProductList.Add(record.ProductName!);
+                    ProductList.Add(record);
                     products.AppendLine(string.Format("{0,5} | {1,30} | {2,10}", i, record.ProductName, record.Price));
                     i++;
                 }
@@ -149,13 +149,33 @@ namespace StoreConsoleApp.UI
                     productId -= 1; // used as List index
                     if (productId >= 0 && ProductList.Count > productId)
                     {
-                        ProductName = ProductList[productId];
+                        ProductName = ProductList[productId].ProductName!;
                         return true;
                     }
                 }
             }
             ProductName = "";
             return false;
+        }
+
+        public List<decimal> GetProductPrice(List<Order> allRecords)
+        {
+            List<decimal> prices = new();
+            foreach(var record in allRecords)
+            {
+                prices.Add(FindPrice(record.ProductName!));
+            }
+            return prices;
+        }
+
+        private decimal FindPrice(string productName)
+        {
+            foreach (var product in ProductList)
+            {
+                if(product.ProductName == productName)
+                    return product.Price;
+            }
+            throw new ProductNotFoundException();
         }
 
         /// <summary>

@@ -22,7 +22,7 @@ namespace StoreConsoleApp.UI
         /// <param name="locationID">store location id</param>
         /// <param name="Processfailed">return true if process succeed, false otherwise</param>
         /// <returns>A string of the order receipt</returns>
-        public async Task<(string, bool)> DisplayOrderDetail(int customerID, List<string> productNames, List<int> productQty, int locationID)
+        public async Task<(string, bool)> DisplayOrderDetail(Store store, int customerID, List<string> productNames, List<int> productQty, int locationID)
         {
             bool Processfailed;
             // Checking List contents:
@@ -59,7 +59,7 @@ namespace StoreConsoleApp.UI
                 else
                 {
                     // List<decimal> price = _repository.GetPrice(order);
-                    receipt.AppendLine(await OrderRecordFormatAsync(allRecords));
+                    receipt.AppendLine(OrderRecordFormatAsync(store, allRecords));
                     Processfailed = false;
                 }
             }
@@ -155,12 +155,10 @@ namespace StoreConsoleApp.UI
         /// </summary>
         /// <param name="allRecords">Order class type collection</param>
         /// <returns>A string of formated order history.</returns>
-        private async Task<string> OrderRecordFormatAsync(IEnumerable<Order> allRecords)
+        private string OrderRecordFormatAsync(Store store, IEnumerable<Order> allRecords)
         {
             // get product price
-            string requestUri = $"/api/order?{JsonSerializer.Serialize(allRecords)}";
-            var response = await service.GetResponseAsync(requestUri);
-            var price = await response.Content.ReadFromJsonAsync<List<decimal>>();
+            var price = store.GetProductPrice((List<Order>)allRecords);
             if(price == null)
             {
                 throw new UnexpectedServerBehaviorException();

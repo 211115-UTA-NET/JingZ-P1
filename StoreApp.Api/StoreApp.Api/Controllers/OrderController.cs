@@ -67,30 +67,6 @@ namespace StoreApp.Api.Controllers
             return orderNum;
         }
 
-        // GET /api/order?List<Order>
-        [HttpGet("price")]
-        public async Task<ActionResult<IEnumerable<decimal>>> GetPriceAsync([FromQuery, Required] List<OrderInfo> orders)
-        {
-            IEnumerable<decimal> orderInfo;
-            List<Order> orderList = new();
-            foreach (OrderInfo order in orders)
-            {
-                orderList.Add(new(order.OrderNum, order.ProductName!, order.ProductQty, order.LocationID, order.OrderTime));
-            }
-            try
-            {
-                _logger.LogInformation("*** [GET] list of order products price ***");
-                orderInfo = await _repository.GetPriceAsync(orderList);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "*** SQL ERROR! Unable to [POST] order products price... ***");
-                return StatusCode(500);
-            }
-
-            return orderInfo.ToList();
-        }
-
         // GET api/order/inventory?productName={name}&locationID={id}
         [HttpGet("inventory")]
         public async Task<ActionResult<int>> GetInventoryAmountAsync([FromQuery, Required] ProductName product)
