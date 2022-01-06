@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using StoreConsoleApp.UI.Dtos;
+using StoreConsoleApp.UI.Exceptions;
+using System.Net.Http.Json;
+using System.Net.Mime;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace StoreConsoleApp.UI
 {
     public class OrderProcess
     {
-        private readonly HttpClient _httpClient = new();
-        public OrderProcess(Uri serverUri)
-        {
-            _httpClient.BaseAddress = serverUri;
-        }
-        /*
+        RequestServices service = new();
+        
         /// <summary>
         ///     Used to display the order detail when a user palced an order. 
         ///     Process include insert order information to database then display the result.
@@ -24,15 +22,19 @@ namespace StoreConsoleApp.UI
         /// <param name="locationID">store location id</param>
         /// <param name="Processfailed">return true if process succeed, false otherwise</param>
         /// <returns>A string of the order receipt</returns>
-        public string DisplayOrderDetail(int customerID, List<string> productNames, List<int> productQty, int locationID, out bool Processfailed)
+        public async Task<(string, bool)> DisplayOrderDetail(int customerID, List<string> productNames, List<int> productQty, int locationID)
         {
+            bool Processfailed;
             // Checking List contents:
             //for (int i = 0; i < productNames.Count; i++)
             //{
             //    Console.WriteLine(productNames[i] + " | " + productQty[i]);
             //}
             var receipt = new StringBuilder();
-            int orderNumber = _repository.GetOrderNumber(customerID);
+            Dictionary<string, string> query = new() { ["customerID"] = customerID+"" };
+            string requestUri = QueryHelpers.AddQueryString("/api/order", query);
+            var response = await service.GetResponseAsync(requestUri);
+            int orderNumber = await response.Content.ReadFromJsonAsync<int>();
             List<Order> order = new();
             if (orderNumber < 0)
             {
@@ -48,7 +50,7 @@ namespace StoreConsoleApp.UI
                     order.Add(new(orderNumber, productNames[i], productQty[i], locationID, null));
                 }
                 // add order to database, return summary
-                IEnumerable<Order> allRecords = ProcessOrder(order);
+                IEnumerable<Order> allRecords = await ProcessOrder(order);
                 if (allRecords == null || !allRecords.Any())
                 {
                     receipt.AppendLine("--- Your Input is invalid, please try again. ---");
@@ -57,13 +59,13 @@ namespace StoreConsoleApp.UI
                 else
                 {
                     // List<decimal> price = _repository.GetPrice(order);
-                    receipt.AppendLine(OrderRecordFormat(allRecords));
+                    receipt.AppendLine(await OrderRecordFormatAsync(allRecords));
                     Processfailed = false;
                 }
             }
-            return receipt.ToString();
+            return (receipt.ToString(), Processfailed);
         }
-        */
+        
         /*
         /// <summary>
         ///     Used to display order history. Process params value to get the information back.
@@ -147,15 +149,22 @@ namespace StoreConsoleApp.UI
             return orderHistory.ToString();
         }
         */
-        /*
+        
         /// <summary>
         ///     A display format for the order history.
         /// </summary>
         /// <param name="allRecords">Order class type collection</param>
         /// <returns>A string of formated order history.</returns>
-        private string OrderRecordFormat(IEnumerable<Order> allRecords)
+        private async Task<string> OrderRecordFormatAsync(IEnumerable<Order> allRecords)
         {
-            List<decimal> price = _repository.GetPrice((List<Order>)allRecords);
+            // get product price
+            string requestUri = $"/api/order?{JsonSerializer.Serialize(allRecords)}";
+            var response = await service.GetResponseAsync(requestUri);
+            var price = await response.Content.ReadFromJsonAsync<List<decimal>>();
+            if(price == null)
+            {
+                throw new UnexpectedServerBehaviorException();
+            }
             var format = new StringBuilder();
             int once = 0;
             int i = 0;
@@ -186,7 +195,7 @@ namespace StoreConsoleApp.UI
             format.AppendLine($"Total Price: ${totalPrice}\n");
             return format.ToString();
         }
-        */
+
 
         /// <summary>
         ///     Used in DisplayOrderDetail() method.
@@ -194,14 +203,19 @@ namespace StoreConsoleApp.UI
         /// </summary>
         /// <param name="order">Order type list</param>
         /// <returns>Inserted order information</returns>
-        //private IEnumerable<Order> ProcessOrder(List<Order> order)
-        //{
-        //    /*
-        //     * Ex:
-        //     * INSERT OrderProduct (OrderNum, ProductName, Amount, LocationID) VALUES (2,'Masking Tape', 5, 3);
-        //     */
-        //    IEnumerable<Order> allRecords = _repository.AddOrder(order);
-        //    return allRecords;
-        //}
+        private async Task<IEnumerable<Order>> ProcessOrder(List<Order> order)
+        {
+            /*
+             * Ex:
+             * INSERT OrderProduct (OrderNum, ProductName, Amount, LocationID) VALUES (2,'Masking Tape', 5, 3);
+             */
+            var response = await service.GetResponseForPlaceOrderAsync(order);
+            var allRecords = await response.Content.ReadFromJsonAsync<List<Order>>();
+            if (allRecords == null)
+            {
+                throw new UnexpectedServerBehaviorException();
+            }
+            return allRecords;
+        }
     }
 }

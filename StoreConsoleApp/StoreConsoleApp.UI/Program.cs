@@ -46,7 +46,7 @@ namespace StoreConsoleApp.App
                     var productsResult = await store.GetStoreProductsAsync(LocationID + "");
                     string storeProducts = productsResult.Item1;
                     Console.WriteLine(storeProducts);
-                    //Ordering(store, LocationID, CustomerID, out exitShop);
+                    exitShop = await Ordering(store, LocationID, CustomerID);
                     if (exitShop) goto MenuSelection;
                 }
                 else if(menuSelection.Trim() == "2")
@@ -212,16 +212,17 @@ namespace StoreConsoleApp.App
             if (!validID) goto StoreLocations;
             return (int.Parse(locationID), exit);
         }
-        /*
+        
         /// <summary>
         ///     Ordering ask user to select products and quantity repeatedly 
         ///     until user want to checkout.
         /// </summary>
         /// <param name="store">Store type class</param>
         /// <param name="locationID">Location ID</param>
-        public static void Ordering(StoreService store, int locationID, int customerID, out bool exit)
+        public static async Task<bool> Ordering(Store store, int locationID, int customerID)
         {
-            List<String> productNames = new();
+            bool exit;
+            List<string> productNames = new();
             List<int> productQty = new();
             while (true)
             {
@@ -236,8 +237,11 @@ namespace StoreConsoleApp.App
                     Console.Write("Enter Product Quantity (Max Qty: 99): ");
                     string? orderQty = Console.ReadLine();
                     if (CheckEmptyInput(orderQty, out orderQty)) goto Ordering;
+                    var validAmount = await store.validAmountAsync(productName, orderQty, locationID);
+                    bool isValid = validAmount.Item1;
+                    int orderAmount = validAmount.Item2;
                     // valid quantity
-                    if (store.validAmount(productName, orderQty, locationID, out int orderAmount))
+                    if (isValid)
                     {
                         // need to handle when select same product twice.
                         if (productNames.Contains(productName))
@@ -258,15 +262,18 @@ namespace StoreConsoleApp.App
                         if (input == "1")
                         {
                             Console.WriteLine();
-                            Console.WriteLine(store.GetStoreProducts(locationID+"", out bool validID));
+                            var productsResult = await store.GetStoreProductsAsync(locationID + "");
+                            string storeProducts = productsResult.Item1;
+                            Console.WriteLine(storeProducts);
                             goto Ordering;
                         }
                         else if (input == "2")
                         {
                             // display the shopping list
-                            IRepository repository = new SqlRepository(connectionString);
-                            OrderProcess orderProcess = new(repository);
-                            string receipt = orderProcess.DisplayOrderDetail(customerID, productNames, productQty, locationID, out bool Processfailed);
+                            OrderProcess orderProcess = new();
+                            var orderDetail = await orderProcess.DisplayOrderDetail(customerID, productNames, productQty, locationID);
+                            string receipt = orderDetail.Item1;
+                            bool Processfailed = orderDetail.Item2;
                             if (Processfailed) goto Ordering;
                             // thank you for your purchase ...
                             Console.WriteLine("\nThank you for your purchase!\n");
@@ -280,7 +287,9 @@ namespace StoreConsoleApp.App
                                 productNames = new();
                                 productQty = new();
                                 Console.WriteLine();
-                                Console.WriteLine(store.GetStoreProducts(locationID + "", out bool validID));
+                                var productsResult = await store.GetStoreProductsAsync(locationID + "");
+                                string storeProducts = productsResult.Item1;
+                                Console.WriteLine(storeProducts);
                                 goto Ordering;
                             } 
                             else if(continueShopping.ToLower() == "n" || ExitShop(continueShopping))
@@ -306,8 +315,9 @@ namespace StoreConsoleApp.App
                     goto Ordering;
                 }
             }
+            return exit;
         }
-        */
+        
         /// <summary>
         ///     Printing empty input error message.
         /// </summary>

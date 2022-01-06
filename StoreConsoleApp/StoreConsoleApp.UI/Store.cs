@@ -4,6 +4,7 @@ using StoreConsoleApp.UI.Exceptions;
 using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Text;
+using System.Text.Json;
 
 namespace StoreConsoleApp.UI
 {
@@ -139,23 +140,23 @@ namespace StoreConsoleApp.UI
         /// <param name="productID">Product ID</param>
         /// <param name="ProductName">return the product name</param>
         /// <returns>true if product id is valid, false otherwise</returns>
-        //public bool ValidProductID(string productID, out string ProductName)
-        //{
-        //    if (int.TryParse(productID, out int productId))
-        //    {
-        //        if (productId > 0 && productId <= ProductList.Count) // must within array range
-        //        {
-        //            productId -= 1; // used as List index
-        //            if (productId >= 0 && ProductList.Count > productId)
-        //            {
-        //                ProductName = ProductList[productId];
-        //                return true;
-        //            }
-        //        }
-        //    }
-        //    ProductName = "";
-        //    return false;
-        //}
+        public bool ValidProductID(string productID, out string ProductName)
+        {
+            if (int.TryParse(productID, out int productId))
+            {
+                if (productId > 0 && productId <= ProductList.Count) // must within array range
+                {
+                    productId -= 1; // used as List index
+                    if (productId >= 0 && ProductList.Count > productId)
+                    {
+                        ProductName = ProductList[productId];
+                        return true;
+                    }
+                }
+            }
+            ProductName = "";
+            return false;
+        }
 
         /// <summary>
         ///     Check if user select product quantity is valid or not by comparing the store inventory amount
@@ -165,24 +166,29 @@ namespace StoreConsoleApp.UI
         /// <param name="locationID">Valid location ID</param>
         /// <param name="orderAmount">return the valid order amount</param>
         /// <returns>true if amount is valid, false otherwise.</returns>
-        //public bool validAmount(string productName, string amount, int locationID, out int orderAmount)
-        //{
-        //    // amount <= inventory amount
-        //    if (int.TryParse(amount, out orderAmount))
-        //    {
-        //        if (orderAmount >= 100 || orderAmount <= 0) {
-        //            Console.WriteLine("\n--- Quantity cannot be 0 and cannot exceed the Max limit. ---");
-        //            return false;
-        //        } // cannot order more than 99
-        //        int inventoryAmount = _repository.InventoryAmount(productName, locationID);
-        //        // Console.WriteLine("inventory amount: " + inventoryAmount);
-        //        if (orderAmount <= inventoryAmount)
-        //        {
-        //            return true;
-        //        }
-        //        else Console.WriteLine("\n--- Sorry, this product is OUT of STOCK... Please select another product. ---");
-        //    }
-        //    return false;
-        //}
+        public async Task<(bool, int)> validAmountAsync(string productName, string amount, int locationID)
+        {
+            int orderAmount;
+            // amount <= inventory amount
+            if (int.TryParse(amount, out orderAmount))
+            {
+                if (orderAmount >= 100 || orderAmount <= 0)
+                {
+                    Console.WriteLine("\n--- Quantity cannot be 0 and cannot exceed the Max limit. ---");
+                    return (false, orderAmount);
+                } // cannot order more than 99
+                Dictionary<string, string> query = new() { ["productName"] = productName, ["locationID"] = locationID+"" };
+                string requestUri = QueryHelpers.AddQueryString("/api/Order/inventory", query);
+                var response = await service.GetResponseAsync(requestUri);
+                int inventoryAmount = await response.Content.ReadFromJsonAsync<int>();
+                // Console.WriteLine("inventory amount: " + inventoryAmount);
+                if (orderAmount <= inventoryAmount)
+                {
+                    return (true, orderAmount);
+                }
+                else Console.WriteLine("\n--- Sorry, this product is OUT of STOCK... Please select another product. ---");
+            }
+            return (false, orderAmount);
+        }
     }
 }

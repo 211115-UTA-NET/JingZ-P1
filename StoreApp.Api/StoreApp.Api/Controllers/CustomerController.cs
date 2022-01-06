@@ -37,8 +37,8 @@ namespace StoreApp.Api.Controllers
             return id;
         }
 
-        // GET api/customer?customerid=forgot&firstname=...&lastname=...
-        // GET api/customer?customerid=...&firstname=""&lastname=""
+        // GET api/customer/login?customerid=forgot&firstname=...&lastname=...
+        // GET api/customer/login?customerid=...&firstname=""&lastname=""
         [HttpGet("login")]
         public async Task<ActionResult<IEnumerable<Customer>>> GetAccount([FromQuery, Required] CustomerLogin customer)
         {

@@ -63,5 +63,29 @@ namespace StoreConsoleApp.UI
             }
             return response;
         }
+
+        /// <summary>
+        /// Get the server respond for sending a POST request of placing order
+        /// </summary>
+        /// <param name="orders"></param>
+        /// <returns>the response from the server</returns>
+        /// <exception cref="UnexpectedServerBehaviorException"></exception>
+        public async Task<HttpResponseMessage> GetResponseForPlaceOrderAsync(List<Order> orders)
+        {
+            HttpRequestMessage request = new(HttpMethod.Post, "/api/order");
+            OrderList list = new();
+            list.orderlist = orders;
+            request.Content = new StringContent(JsonSerializer.Serialize(list), Encoding.UTF8, MediaTypeNames.Application.Json);
+            HttpResponseMessage response;
+            try
+            {
+                response = await _httpClient.SendAsync(request);
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new UnexpectedServerBehaviorException("Network Error", ex);
+            }
+            return response;
+        }
     }
 }
