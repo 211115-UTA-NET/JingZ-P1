@@ -298,7 +298,7 @@ namespace StoreApi.DataStorage
             foreach (DataRow row in dataSet.Tables[0].Rows)
             {
                 orderHistroy.Add(new((int)row["OrderNum"], (string)row["ProductName"], (int)row["Amount"],
-                    (int)row["LocationID"], row["OrderTime"].ToString(), (string)row["StoreLocation"]));
+                    (int)row["LocationID"], row["OrderTime"].ToString()!, (string)row["StoreLocation"]));
             }
             return orderHistroy;
         }

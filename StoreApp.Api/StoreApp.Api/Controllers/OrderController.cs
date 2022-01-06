@@ -28,7 +28,7 @@ namespace StoreApp.Api.Controllers
             foreach(OrderInfo order in orders.orderlist!)
             {
                 _logger.LogInformation("Order added to list");
-                orderList.Add(new(order.OrderNum, order.ProductName!, order.ProductQty, order.LocationID, order.OrderTime));
+                orderList.Add(new(order.OrderNum, order.ProductName!, order.ProductQty, order.LocationID));
             }
             try
             {
