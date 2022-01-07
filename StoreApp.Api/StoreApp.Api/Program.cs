@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using StoreApi.DataStorage;
 
 // connection to db
-string connectionString = File.ReadAllText("D:/Study_Documents/Revature/Training/DBConnectionStrings/StoreDB.txt");
-IRepository repository = new SqlRepository(connectionString);
-
 var builder = WebApplication.CreateBuilder(args);
+
+string connectionString = File.ReadAllText(builder.Configuration.GetConnectionString("Store-DB-Connection"));
+IRepository repository = new SqlRepository(connectionString);
 
 // Add services to the container.
 
