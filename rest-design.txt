@@ -24,8 +24,8 @@
 /api/order/ordernum?customerID={id}
 	GET - get order number of the recent placed order
 	
-/api/order?List<Order>
-	Get - get product price of each item in this order
+/api/order/inventory?productName={name}&locationID={id}
+	GET - get inventory amount of given product
 	
 /api/order?customerID={id}&orderNum=111
 	GET - find specific order
@@ -34,13 +34,8 @@
 	GET - get all order history of customerID {id}
 	
 /api/order?mostrecent=true
-	GET - mostrecent order/also able to get order number
+	GET - mostrecent order
 
 /api/order?customerID={id}&locationID=1
 	GET - get location order history of customer {id}
-	
-	
-	
-// inventory api
-/api/inventory?productName={name}&locationID={id}
 
