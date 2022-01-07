@@ -9,7 +9,8 @@ namespace StoreConsoleApp.UI
     public class RequestServices : IRequestServices
     {
         private readonly HttpClient _httpClient = new();
-        Uri server = new("https://localhost:7282");
+        // Uri server = new("https://localhost:7282");
+        Uri server = new("https://211115storeapp.azurewebsites.net");
         public RequestServices()
         {
             _httpClient.BaseAddress = server;

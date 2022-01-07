@@ -3,8 +3,10 @@ using StoreApi.DataStorage;
 
 // connection to db
 var builder = WebApplication.CreateBuilder(args);
+// for local testing:
+// string connectionString = File.ReadAllText(builder.Configuration.GetConnectionString("Store-DB-Connection"));
 
-string connectionString = File.ReadAllText(builder.Configuration.GetConnectionString("Store-DB-Connection"));
+string connectionString = builder.Configuration.GetConnectionString("Store-DB-Connection");
 IRepository repository = new SqlRepository(connectionString);
 
 // Add services to the container.
