@@ -27,6 +27,7 @@
 /api/order/inventory?productName={name}&locationID={id}
 	GET - get inventory amount of given product
 	
+// --- api for display orders ---
 /api/order?customerID={id}&orderNum=111
 	GET - find specific order
 

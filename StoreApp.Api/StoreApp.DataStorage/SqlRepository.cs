@@ -272,25 +272,6 @@ namespace StoreApi.DataStorage
             return false;
         }
 
-        /// <summary>
-        ///     Get product price from the database
-        /// </summary>
-        /// <param name="order">Order class type</param>
-        /// <returns>The product price</returns>
-        public async Task<List<decimal>> GetPriceAsync(List<Order> order)
-        {
-            List<decimal> price = new();
-            foreach (Order item in order)
-            {
-                DataSet dataSet = await DBReadOnlyAsync(
-                    "SELECT Price FROM StoreInventory WHERE LocationID = @locationID AND ProductName=@productName",
-                    new string[] { "locationID", "productName" },
-                    new object[] { item.LocationID, item.ProductName });
-                price.Add((decimal)dataSet.Tables[0].Rows[0]["Price"]);
-            }
-            return price;
-        }
-
         private static IEnumerable<Order> AddOrderHistoryDatatoList(DataSet dataSet)
         {
             List<Order> orderHistroy = new();

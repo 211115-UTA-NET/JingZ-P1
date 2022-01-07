@@ -10,7 +10,6 @@ namespace StoreApi.DataStorage
         Task<int> InventoryAmountAsync(string productName, int locationID);
         Task<int> GetOrderNumberAsync(int customerID);
         Task<IEnumerable<Order>> AddOrderAsync(List<Order> order);
-        Task<List<decimal>> GetPriceAsync(List<Order> order);
         Task<IEnumerable<Customer>> FindCustomerAsync(string customerID, string firstName, string lastName);
         Task<IEnumerable<Order>> GetLocationOrdersAsync(int customerID, int locationID);
         Task<IEnumerable<Order>> GetStoreOrdersAsync(int customerID);
