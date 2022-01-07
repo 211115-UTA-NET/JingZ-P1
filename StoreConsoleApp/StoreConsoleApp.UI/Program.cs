@@ -12,7 +12,7 @@ namespace StoreConsoleApp.App
             bool exitShop = false;
             while (!exitShop)
             {
-                Store store = new();
+                StoreProcess store = new();
                 // USER LOGIN SECTION
                 var login = await CustomerLoginAsync(store);
                 int CustomerID = login.Item1;
@@ -105,7 +105,7 @@ namespace StoreConsoleApp.App
         /// <param name="store">A Store type class</param>
         /// <param name="exit">A boolean that checks if user want to exit the shop</param>
         /// <returns>int Customer ID</returns>
-        public static async Task<(int, bool)> CustomerLoginAsync(Store store)
+        public static async Task<(int, bool)> CustomerLoginAsync(StoreProcess store)
         {
         NewCustomer:
             bool exit;
@@ -193,7 +193,7 @@ namespace StoreConsoleApp.App
         /// <param name="store">A Store type class</param>
         /// <param name="exit">A boolean that checks if user want to exit the shop</param>
         /// <returns>The location ID that User selected</returns>
-        public static async Task<(int, bool)> StoreLocationAsync(Store store)
+        public static async Task<(int, bool)> StoreLocationAsync(StoreProcess store)
         {
         StoreLocations:
             bool exit;
@@ -220,7 +220,7 @@ namespace StoreConsoleApp.App
         /// </summary>
         /// <param name="store">Store type class</param>
         /// <param name="locationID">Location ID</param>
-        public static async Task<bool> Ordering(Store store, int locationID, int customerID)
+        public static async Task<bool> Ordering(StoreProcess store, int locationID, int customerID)
         {
             bool exit;
             List<string> productNames = new();

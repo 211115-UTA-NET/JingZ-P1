@@ -2,20 +2,18 @@
 using StoreConsoleApp.UI.Dtos;
 using StoreConsoleApp.UI.Exceptions;
 using System.Net.Http.Json;
-using System.Net.Mime;
 using System.Text;
-using System.Text.Json;
 
 namespace StoreConsoleApp.UI
 {
-    public class Store
+    public class StoreProcess
     {
         /// <summary>
         ///     store the displayed product list of the store location.
         /// </summary>
         private List<Product> ProductList;
         RequestServices service = new();
-        public Store()
+        public StoreProcess()
         {
             ProductList = new();
         }

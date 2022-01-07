@@ -22,7 +22,7 @@ namespace StoreConsoleApp.UI
         /// <param name="locationID">store location id</param>
         /// <param name="Processfailed">return true if process succeed, false otherwise</param>
         /// <returns>A string of the order receipt</returns>
-        public async Task<(string, bool)> DisplayOrderDetail(Store store, int customerID, List<string> productNames, List<int> productQty, int locationID)
+        public async Task<(string, bool)> DisplayOrderDetail(StoreProcess store, int customerID, List<string> productNames, List<int> productQty, int locationID)
         {
             bool Processfailed;
             // Checking List contents:
@@ -161,7 +161,7 @@ namespace StoreConsoleApp.UI
         /// </summary>
         /// <param name="allRecords">Order class type collection</param>
         /// <returns>A string of formated order history.</returns>
-        private string OrderRecordFormatAsync(Store store, IEnumerable<Order> allRecords)
+        private string OrderRecordFormatAsync(StoreProcess store, IEnumerable<Order> allRecords)
         {
             // get product price
             var price = store.GetProductPrice((List<Order>)allRecords);
