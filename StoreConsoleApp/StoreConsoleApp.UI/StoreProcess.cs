@@ -3,6 +3,7 @@ using StoreConsoleApp.UI.Dtos;
 using StoreConsoleApp.UI.Exceptions;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 
 namespace StoreConsoleApp.UI
 {
@@ -24,7 +25,7 @@ namespace StoreConsoleApp.UI
         /// <returns>A string of formated store location list</returns>
         public async Task<string> GetLocationsAsync()
         {
-            HttpResponseMessage response = await service.GetResponseAsync("/api/storeinfo");
+            HttpResponseMessage response = await service.GetResponseForGETAsync("/api/storeinfo");
 
             // store response in dto
             var allRecords = await response.Content.ReadFromJsonAsync<List<Location>>();
@@ -56,7 +57,7 @@ namespace StoreConsoleApp.UI
             ProductList = new();
             bool validID;
             string requestUri = $"/api/storeinfo/{locationID}";
-            HttpResponseMessage response = await service.GetResponseAsync(requestUri);
+            HttpResponseMessage response = await service.GetResponseForGETAsync(requestUri);
 
             var allRecords = await response.Content.ReadFromJsonAsync<List<Product>>();
             var products = new StringBuilder();
@@ -97,7 +98,7 @@ namespace StoreConsoleApp.UI
                 firstName = firstName,
                 lastName = lastName
             };
-            var response = await service.GetResponseForAddCustomerAsync(customerName);
+            var response = await service.GetResponseForPOSTAsync(JsonSerializer.Serialize(customerName), "/api/customer");
             int CustomerID = await response.Content.ReadFromJsonAsync<int>();
             return CustomerID;
         }
@@ -115,7 +116,7 @@ namespace StoreConsoleApp.UI
         {
             Dictionary<string, string> query = new() { ["CustomerID"] = customerID, ["LastName"] = lastName, ["FirstName"] = firstName };
             string requestUri = QueryHelpers.AddQueryString("/api/customer/login", query);
-            var response = await service.GetResponseAsync(requestUri);
+            var response = await service.GetResponseForGETAsync(requestUri);
             var customer = await response.Content.ReadFromJsonAsync<List<Customer>>();
             int CustomerID = -1;  //second return value
             if (customer == null || !customer.Any())
@@ -197,7 +198,7 @@ namespace StoreConsoleApp.UI
                 } // cannot order more than 99
                 Dictionary<string, string> query = new() { ["productName"] = productName, ["locationID"] = locationID+"" };
                 string requestUri = QueryHelpers.AddQueryString("/api/Order/inventory", query);
-                var response = await service.GetResponseAsync(requestUri);
+                var response = await service.GetResponseForGETAsync(requestUri);
                 int inventoryAmount = await response.Content.ReadFromJsonAsync<int>();
                 // Console.WriteLine("inventory amount: " + inventoryAmount);
                 if (orderAmount <= inventoryAmount)

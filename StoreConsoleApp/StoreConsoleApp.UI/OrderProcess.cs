@@ -33,7 +33,7 @@ namespace StoreConsoleApp.UI
             var receipt = new StringBuilder();
             Dictionary<string, string> query = new() { ["customerID"] = customerID+"" };
             string requestUri = QueryHelpers.AddQueryString("/api/order/ordernum", query);
-            var response = await service.GetResponseAsync(requestUri);
+            var response = await service.GetResponseForGETAsync(requestUri);
             int orderNumber = await response.Content.ReadFromJsonAsync<int>();
             List<Order> order = new();
             if (orderNumber < 0)
@@ -207,13 +207,16 @@ namespace StoreConsoleApp.UI
         /// </summary>
         /// <param name="order">Order type list</param>
         /// <returns>Inserted order information</returns>
-        private async Task<IEnumerable<Order>> ProcessOrder(List<Order> order)
+        private async Task<IEnumerable<Order>> ProcessOrder(List<Order> orders)
         {
             /*
              * Ex:
              * INSERT OrderProduct (OrderNum, ProductName, Amount, LocationID) VALUES (2,'Masking Tape', 5, 3);
              */
-            var response = await service.GetResponseForPlaceOrderAsync(order);
+            OrderList list = new();
+            list.orderlist = orders;
+            var json = JsonSerializer.Serialize(list);
+            var response = await service.GetResponseForPOSTAsync(json, "/api/order");
             var allRecords = await response.Content.ReadFromJsonAsync<List<Order>>();
             if (allRecords == null)
             {

@@ -21,7 +21,7 @@ namespace StoreConsoleApp.UI
         /// <param name="requestUri">request URI</param>
         /// <returns>the response from the server</returns>
         /// <exception cref="UnexpectedServerBehaviorException"></exception>
-        public async Task<HttpResponseMessage> GetResponseAsync(string requestUri)
+        public async Task<HttpResponseMessage> GetResponseForGETAsync(string requestUri)
         {
             HttpRequestMessage request = new(HttpMethod.Get, requestUri);
             // expect application/json reply. ("content negotiation" in http/rest)
@@ -45,39 +45,15 @@ namespace StoreConsoleApp.UI
         }
 
         /// <summary>
-        /// Get the server respond for sending a POST request of adding a new customer.
-        /// </summary>
-        /// <param name="customerName">contains customer first & last name</param>
-        /// <returns>the response from the server</returns>
-        public async Task<HttpResponseMessage> GetResponseForAddCustomerAsync(CustomerName customerName)
-        {
-            HttpRequestMessage request = new(HttpMethod.Post, "/api/customer");
-            request.Content = new StringContent(JsonSerializer.Serialize(customerName), Encoding.UTF8, MediaTypeNames.Application.Json);
-            HttpResponseMessage response;
-            try
-            {
-                response = await _httpClient.SendAsync(request);
-            }
-            catch (HttpRequestException ex)
-            {
-                throw new UnexpectedServerBehaviorException("Network Error", ex);
-            }
-            return response;
-        }
-
-        /// <summary>
-        /// Get the server respond for sending a POST request of placing order
+        /// Get the server respond for sending a POST request
         /// </summary>
         /// <param name="orders"></param>
         /// <returns>the response from the server</returns>
         /// <exception cref="UnexpectedServerBehaviorException"></exception>
-        public async Task<HttpResponseMessage> GetResponseForPlaceOrderAsync(List<Order> orders)
+        public async Task<HttpResponseMessage> GetResponseForPOSTAsync(string jsonContent, string requestUri)
         {
-            HttpRequestMessage request = new(HttpMethod.Post, "/api/order");
-            OrderList list = new();
-            list.orderlist = orders;
-            var json = JsonSerializer.Serialize(list);
-            request.Content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
+            HttpRequestMessage request = new(HttpMethod.Post, requestUri);
+            request.Content = new StringContent(jsonContent, Encoding.UTF8, MediaTypeNames.Application.Json);
             HttpResponseMessage response;
             try
             {

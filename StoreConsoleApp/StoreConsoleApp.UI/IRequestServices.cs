@@ -4,8 +4,7 @@ namespace StoreConsoleApp.UI
 {
     public interface IRequestServices
     {
-        public Task<HttpResponseMessage> GetResponseAsync(string requestUri);
-        public Task<HttpResponseMessage> GetResponseForAddCustomerAsync(CustomerName customerName);
-        public Task<HttpResponseMessage> GetResponseForPlaceOrderAsync(List<Order> orders);
+        public Task<HttpResponseMessage> GetResponseForGETAsync(string requestUri);
+        public Task<HttpResponseMessage> GetResponseForPOSTAsync(string jsonContent, string requestUri);
     }
 }
