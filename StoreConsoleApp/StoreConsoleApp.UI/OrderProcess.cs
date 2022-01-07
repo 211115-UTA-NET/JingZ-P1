@@ -110,6 +110,7 @@ namespace StoreConsoleApp.UI
                 // get all order history of the customer
                 allRecords = _repository.GetStoreOrders(customerID);
             }
+
             if (allRecords == null || !allRecords.Any())
             {
                 orderHistory.AppendLine("--- Your order histroy is empty. ---");
