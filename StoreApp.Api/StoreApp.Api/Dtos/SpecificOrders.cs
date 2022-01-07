@@ -2,11 +2,11 @@
 
 namespace StoreApp.Api.Controllers
 {
-    public class CustomerOrderInfo
+    public class SpecificOrders
     {
         [Required]
         public int customerId { get; set; }
-        public int orderNum { get; set; } = -1; //optional
-        public int locationId { get; set; } = -1; //optional
+        [Required]
+        public int orderNum { get; set; }
     }
 }

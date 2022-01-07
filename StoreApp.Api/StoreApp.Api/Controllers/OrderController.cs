@@ -87,7 +87,7 @@ namespace StoreApp.Api.Controllers
 
         // GET api/order/local?customerID={cid}&locationID={lid}
         [HttpGet("local")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetLocationOrderAsync([FromQuery, Required]CustomerOrderInfo order)
+        public async Task<ActionResult<IEnumerable<Order>>> GetLocationOrderAsync([FromQuery, Required]LocalOrders order)
         {
             IEnumerable<Order> orderInfo;
             try
@@ -105,13 +105,13 @@ namespace StoreApp.Api.Controllers
 
         // GET api/order/all?customerID={id}
         [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetStoreOrderAsync([FromQuery, Required] CustomerOrderInfo order)
+        public async Task<ActionResult<IEnumerable<Order>>> GetStoreOrderAsync([FromQuery, Required] int customerId)
         {
             IEnumerable<Order> orderInfo;
             try
             {
                 _logger.LogInformation("*** [GET] All order history of a customer ***");
-                orderInfo = await _repository.GetStoreOrdersAsync(order.customerId);
+                orderInfo = await _repository.GetStoreOrdersAsync(customerId);
             }
             catch (SqlException ex)
             {
@@ -123,13 +123,13 @@ namespace StoreApp.Api.Controllers
 
         // GET api/order/recent?customerID={id}
         [HttpGet("recent")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetMostRecentOrderAsync([FromQuery, Required] CustomerOrderInfo order)
+        public async Task<ActionResult<IEnumerable<Order>>> GetMostRecentOrderAsync([FromQuery, Required] int customerId)
         {
             IEnumerable<Order> orderInfo;
             try
             {
                 _logger.LogInformation("*** [GET] Most recent order of the customer ***");
-                orderInfo = await _repository.GetMostRecentOrderAsync(order.customerId);
+                orderInfo = await _repository.GetMostRecentOrderAsync(customerId);
             }
             catch (SqlException ex)
             {
@@ -140,8 +140,8 @@ namespace StoreApp.Api.Controllers
         }
 
         // GET api/order/specific?customerID={id}&orderNum={num}
-        [HttpGet("recent")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetSpecificOrderAsync([FromQuery, Required] CustomerOrderInfo order)
+        [HttpGet("specific")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetSpecificOrderAsync([FromQuery, Required] SpecificOrders order)
         {
             IEnumerable<Order> orderInfo;
             try
