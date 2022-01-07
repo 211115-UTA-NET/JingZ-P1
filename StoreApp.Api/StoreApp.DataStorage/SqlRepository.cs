@@ -223,7 +223,6 @@ namespace StoreApi.DataStorage
         /// <returns>Summary of the insertion as receipt.</returns>
         public async Task<IEnumerable<Order>> AddOrderAsync(List<Order> order)
         {
-            List<Order> receipt = new();
             foreach (Order orderProduct in order)
             {
                 // insert order product & update inventory amount
@@ -292,7 +291,7 @@ namespace StoreApi.DataStorage
             return price;
         }
 
-        private IEnumerable<Order> AddOrderHistoryDatatoList(DataSet dataSet)
+        private static IEnumerable<Order> AddOrderHistoryDatatoList(DataSet dataSet)
         {
             List<Order> orderHistroy = new();
             foreach (DataRow row in dataSet.Tables[0].Rows)

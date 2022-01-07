@@ -1,5 +1,4 @@
-﻿
-using StoreConsoleApp.UI;
+﻿using StoreConsoleApp.UI;
 
 namespace StoreConsoleApp.App
 {

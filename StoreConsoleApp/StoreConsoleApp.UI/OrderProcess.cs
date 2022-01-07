@@ -71,8 +71,7 @@ namespace StoreConsoleApp.UI
             }
             return (receipt.ToString(), Processfailed);
         }
-        
-        /*
+                
         /// <summary>
         ///     Used to display order history. Process params value to get the information back.
         ///     If locationID param is provided then it will return order history of the user in current store location.
@@ -154,7 +153,7 @@ namespace StoreConsoleApp.UI
             }
             return orderHistory.ToString();
         }
-        */
+        
         
         /// <summary>
         ///     A display format for the order history.

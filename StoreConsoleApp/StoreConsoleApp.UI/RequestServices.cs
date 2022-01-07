@@ -1,8 +1,6 @@
-﻿using StoreConsoleApp.UI.Dtos;
-using StoreConsoleApp.UI.Exceptions;
+﻿using StoreConsoleApp.UI.Exceptions;
 using System.Net.Mime;
 using System.Text;
-using System.Text.Json;
 
 namespace StoreConsoleApp.UI
 {
