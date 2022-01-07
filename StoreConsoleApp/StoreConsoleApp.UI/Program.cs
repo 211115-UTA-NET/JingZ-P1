@@ -7,7 +7,7 @@ namespace StoreConsoleApp.App
         public static async Task Main(string[] args)
         {
             Console.WriteLine("[ Welcome to Stationery Shop ]\n");
-            //OrderProcessService orderProcess = new(server);
+            OrderProcess orderProcess = new();
             bool exitShop = false;
             while (!exitShop)
             {
@@ -51,14 +51,16 @@ namespace StoreConsoleApp.App
                 else if(menuSelection.Trim() == "2")
                 {
                     // display all order history of this store location
-                    //Console.WriteLine(orderProcess.DisplayOrderHistory(CustomerID, out bool getHistoryFailed, LocationID));
-                    //if(getHistoryFailed) goto MenuSelection;
+                    var displayResult = await orderProcess.DisplayOrderHistory(CustomerID, LocationID);
+                    Console.WriteLine(displayResult.Item1);
+                    if (displayResult.Item2) goto MenuSelection;
                 }
                 else if(menuSelection.Trim() == "3")
                 {
                     // display all order history of Stationery Shop
-                    //Console.WriteLine(orderProcess.DisplayOrderHistory(CustomerID, out bool getHistoryFailed));
-                    //if (getHistoryFailed) goto MenuSelection;
+                    var displayResult = await orderProcess.DisplayOrderHistory(CustomerID);
+                    Console.WriteLine(displayResult.Item1);
+                    if (displayResult.Item2) goto MenuSelection;
                 }
                 else if(menuSelection.Trim() == "4")
                 {
@@ -74,8 +76,9 @@ namespace StoreConsoleApp.App
                         goto SearchOrder; 
                     }
                     // display most recent/specific order of the customer depend on user input
-                    //Console.WriteLine(orderProcess.DisplayOrderHistory(CustomerID, out bool getHistoryFailed, -1, orderNum));
-                    //if (getHistoryFailed) goto MenuSelection;
+                    var displayResult = await orderProcess.DisplayOrderHistory(CustomerID, -1, orderNum);
+                    Console.WriteLine(displayResult.Item1);
+                    if (displayResult.Item2) goto MenuSelection;
                 }
                 else
                 {

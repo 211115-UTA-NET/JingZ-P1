@@ -85,6 +85,27 @@ namespace StoreConsoleApp.UI
             return (products.ToString(), validID);
         }
 
+        public async Task<List<Product>> GetProductList(int locationId)
+        {
+            string requestUri = $"/api/storeinfo/{locationId}";
+            HttpResponseMessage response = await service.GetResponseForGETAsync(requestUri);
+            List<Product> products = new();
+            var allRecords = await response.Content.ReadFromJsonAsync<List<Product>>();
+            if (allRecords == null || !allRecords.Any())
+            {
+                Console.WriteLine("--- Your Input is invalid, please try again. ---");
+            }
+            else
+            {
+                foreach (var record in allRecords)
+                {
+                    // store ProductName
+                    products.Add(record);
+                }
+            }
+            return products;
+        }
+
         /// <summary>
         ///     Added new customer to the database
         /// </summary>
@@ -157,22 +178,22 @@ namespace StoreConsoleApp.UI
             return false;
         }
 
-        public List<decimal> GetProductPrice(List<Order> allRecords)
+        public List<decimal> GetProductPrice(List<Order> allRecords, List<Product> products)
         {
             List<decimal> prices = new();
             foreach(var record in allRecords)
             {
-                prices.Add(FindPrice(record.ProductName!));
+                prices.Add(FindPrice(record.ProductName!, products));
             }
             return prices;
         }
 
-        private decimal FindPrice(string productName)
+        private decimal FindPrice(string productName, List<Product> products)
         {
-            foreach (var product in ProductList)
+            foreach (var product in products)
             {
-                if(product.ProductName == productName)
-                    return product.Price;
+                if (product.ProductName == productName)
+                   return product.Price;
             }
             throw new ProductNotFoundException();
         }

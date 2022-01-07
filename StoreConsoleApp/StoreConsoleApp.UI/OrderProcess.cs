@@ -2,7 +2,6 @@
 using StoreConsoleApp.UI.Dtos;
 using StoreConsoleApp.UI.Exceptions;
 using System.Net.Http.Json;
-using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 
@@ -65,7 +64,7 @@ namespace StoreConsoleApp.UI
                 else
                 {
                     // List<decimal> price = _repository.GetPrice(order);
-                    receipt.AppendLine(OrderRecordFormatAsync(store, allRecords));
+                    receipt.AppendLine(await OrderRecordFormatAsync(locationID, allRecords));
                     Processfailed = false;
                 }
             }
@@ -83,34 +82,43 @@ namespace StoreConsoleApp.UI
         /// <param name="locationID">(optional param) location ID provided for search local order history</param>
         /// <param name="OrderNum">(optional param) sepecific order number or [0] for most recent. provided for searching specific/most recent order</param>
         /// <returns>A string of order history based on user input params. See summary for details.</returns>
-        public string DisplayOrderHistory(int customerID, out bool getHistoryFailed, int locationID = -1, int OrderNum = -1)
+        public async Task<(string, bool)> DisplayOrderHistory(int customerID, int locationID = -1, int OrderNum = -1)
         {
+            bool getHistoryFailed;
             var orderHistory = new StringBuilder();
-            IEnumerable<Order> allRecords;
+            string requestUri;
             if (locationID > -1 && OrderNum < 0)
             {
                 // get all order history from the local store
-                allRecords = _repository.GetLocationOrders(customerID, locationID);
+                Dictionary<string, string> query = new() { ["customerId"] = customerID + "", ["locationId"] = locationID+"" };
+                requestUri = QueryHelpers.AddQueryString("/api/order/local", query);
+
             }
             else if(OrderNum > -1 && locationID < 0)
             {
                 // get most recent order
                 if(OrderNum == 0)
                 {
-                    allRecords = _repository.GetMostRecentOrder(customerID);
+                    Dictionary<string, string> query = new() { ["customerId"] = customerID+""};
+                    requestUri = QueryHelpers.AddQueryString("/api/order/recent", query);
                 }
                 else
                 {
                     // get order by order number
-                    allRecords = _repository.GetSpecificOrder(customerID, OrderNum);
+                    Dictionary<string, string> query = new() { ["customerId"] = customerID + "", ["orderNum"] = OrderNum+"" };
+                    requestUri = QueryHelpers.AddQueryString("/api/order/specific", query);
                 }
             }
             else
             {
                 // get all order history of the customer
-                allRecords = _repository.GetStoreOrders(customerID);
+                Dictionary<string, string> query = new() { ["customerId"] = customerID + "" };
+                requestUri = QueryHelpers.AddQueryString("/api/order/all", query);
             }
-
+            // send request to service
+            var response = await service.GetResponseForGETAsync(requestUri);
+            var allRecords = await response.Content.ReadFromJsonAsync<List<Order>>();
+            // process allRecords
             if (allRecords == null || !allRecords.Any())
             {
                 orderHistory.AppendLine("--- Your order histroy is empty. ---");
@@ -119,40 +127,40 @@ namespace StoreConsoleApp.UI
             else
             {
                 List<Order> tmp = new();
-                var allrecords = (List<Order>)allRecords;
-                int prevOrderNum = allrecords[0].OrderNum;
-                tmp.Add(allrecords[0]);
-                if (allrecords.Count == 1)
+                int prevOrderNum = allRecords[0].OrderNum;
+                tmp.Add(allRecords[0]);
+                if (allRecords.Count == 1)
                 {
-                    orderHistory.AppendLine(OrderRecordFormat(allrecords));
+                    orderHistory.AppendLine(await OrderRecordFormatAsync(allRecords[0].LocationID, allRecords));;
                 }
                 else
                 {
+                    // formatting the order info: same order# goes to same block of format, else start a new block of format
                     int currentOrderNum;
-                    for (int i = 1; i < allrecords.Count; i++)
+                    for (int i = 1; i < allRecords.Count; i++)
                     {
-                        currentOrderNum = allrecords[i].OrderNum;
+                        currentOrderNum = allRecords[i].OrderNum;
                         if (currentOrderNum == prevOrderNum)
                         {
-                            tmp.Add(allrecords[i]);
-                            if (i == allrecords.Count - 1)
-                                orderHistory.AppendLine(OrderRecordFormat(tmp));
+                            tmp.Add(allRecords[i]);
+                            if (i == allRecords.Count - 1)
+                                orderHistory.AppendLine(await OrderRecordFormatAsync(allRecords[i].LocationID, tmp));
                         }
                         else
                         {
-                            orderHistory.AppendLine(OrderRecordFormat(tmp));
+                            orderHistory.AppendLine(await OrderRecordFormatAsync(allRecords[i-1].LocationID, tmp));
                             tmp = new();
-                            tmp.Add(allrecords[i]);
+                            tmp.Add(allRecords[i]);
                             // if last records didn't append
-                            if (i == allrecords.Count - 1)
-                                orderHistory.AppendLine(OrderRecordFormat(tmp));
+                            if (i == allRecords.Count - 1)
+                                orderHistory.AppendLine(await OrderRecordFormatAsync(allRecords[i].LocationID, tmp));
                         }
                         prevOrderNum = currentOrderNum;
                     }
                 }
                 getHistoryFailed = false;
             }
-            return orderHistory.ToString();
+            return (orderHistory.ToString(), getHistoryFailed);
         }
         
         
@@ -161,10 +169,12 @@ namespace StoreConsoleApp.UI
         /// </summary>
         /// <param name="allRecords">Order class type collection</param>
         /// <returns>A string of formated order history.</returns>
-        private string OrderRecordFormatAsync(StoreProcess store, IEnumerable<Order> allRecords)
+        private async Task<string> OrderRecordFormatAsync(int locationId, IEnumerable<Order> allRecords)
         {
             // get product price
-            var price = store.GetProductPrice((List<Order>)allRecords);
+            StoreProcess storeProcess = new();
+            var products = await storeProcess.GetProductList(locationId);
+            var price = storeProcess.GetProductPrice((List<Order>)allRecords, products);
             if(price == null)
             {
                 throw new UnexpectedServerBehaviorException();

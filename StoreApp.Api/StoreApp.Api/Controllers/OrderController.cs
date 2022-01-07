@@ -103,7 +103,7 @@ namespace StoreApp.Api.Controllers
             return orderInfo.ToList();
         }
 
-        // GET api/order/all?customerID={id}
+        // GET api/order/all?customerId={id}
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<Order>>> GetStoreOrderAsync([FromQuery, Required] int customerId)
         {
@@ -121,7 +121,7 @@ namespace StoreApp.Api.Controllers
             return orderInfo.ToList();
         }
 
-        // GET api/order/recent?customerID={id}
+        // GET api/order/recent?customerId={id}
         [HttpGet("recent")]
         public async Task<ActionResult<IEnumerable<Order>>> GetMostRecentOrderAsync([FromQuery, Required] int customerId)
         {
@@ -139,7 +139,7 @@ namespace StoreApp.Api.Controllers
             return orderInfo.ToList();
         }
 
-        // GET api/order/specific?customerID={id}&orderNum={num}
+        // GET api/order/specific?customerId={id}&orderNum={num}
         [HttpGet("specific")]
         public async Task<ActionResult<IEnumerable<Order>>> GetSpecificOrderAsync([FromQuery, Required] SpecificOrders order)
         {

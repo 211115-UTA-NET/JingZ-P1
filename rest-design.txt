@@ -28,15 +28,15 @@
 	GET - get inventory amount of given product
 	
 // --- api for display orders ---
-/api/order?customerID={id}&orderNum=111
+/api/order/specific?customerID={id}&orderNum=111
 	GET - find specific order
 
-/api/order?customerID={id}
+/api/order/all?customerID={id}
 	GET - get all order history of customerID {id}
 	
-/api/order?mostrecent=true
+/api/order/recent?customerID={id}
 	GET - mostrecent order
 
-/api/order?customerID={id}&locationID=1
+/api/order/local?customerID={id}&locationID=1
 	GET - get location order history of customer {id}
 
