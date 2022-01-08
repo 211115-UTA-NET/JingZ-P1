@@ -9,11 +9,11 @@ namespace StoreConsoleApp.UI
 {
     public class OrderProcess
     {
-        private readonly RequestServices service;
+        private readonly IRequestServices service;
 
-        public OrderProcess()
+        public OrderProcess(IRequestServices requestServices)
         {
-            service = new();
+            service = requestServices;
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace StoreConsoleApp.UI
         private async Task<string> OrderRecordFormatAsync(int locationId, IEnumerable<Order> allRecords)
         {
             // get product price
-            StoreProcess storeProcess = new();
+            StoreProcess storeProcess = new(service);
             var products = await storeProcess.GetProductList(locationId);
             var price = storeProcess.GetProductPrice((List<Order>)allRecords, products);
             if(price == null)

@@ -13,11 +13,11 @@ namespace StoreConsoleApp.UI
         ///     store the displayed product list of the store location.
         /// </summary>
         private List<Product> ProductList;
-        private readonly RequestServices service;
-        public StoreProcess()
+        private readonly IRequestServices service;
+        public StoreProcess(IRequestServices requestServices)
         {
             ProductList = new();
-            service = new();
+            service = requestServices;
         }
 
         /// <summary>

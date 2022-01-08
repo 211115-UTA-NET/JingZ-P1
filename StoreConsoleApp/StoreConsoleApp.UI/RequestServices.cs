@@ -7,11 +7,9 @@ namespace StoreConsoleApp.UI
     public class RequestServices : IRequestServices
     {
         private readonly HttpClient _httpClient = new();
-        private readonly Uri server;
-        public RequestServices()
+        public RequestServices(Uri service)
         {
-            server = new("https://211115storeappservice.azurewebsites.net");
-            _httpClient.BaseAddress = server;
+            _httpClient.BaseAddress = service;
         }
         /// <summary>
         /// Get response message from a GET method

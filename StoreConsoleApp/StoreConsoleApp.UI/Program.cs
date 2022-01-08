@@ -4,14 +4,16 @@ namespace StoreConsoleApp.App
 {
     public class Program
     {
+        private static Uri server = new("https://211115storeappservice.azurewebsites.net");
         public static async Task Main(string[] args)
         {
+            IRequestServices services = new RequestServices(server);
             Console.WriteLine("[ Welcome to Stationery Shop ]\n");
-            OrderProcess orderProcess = new();
+            OrderProcess orderProcess = new(services);
             bool exitShop = false;
             while (!exitShop)
             {
-                StoreProcess store = new();
+                StoreProcess store = new(services);
                 // USER LOGIN SECTION
                 var login = await CustomerLoginAsync(store);
                 int CustomerID = login.Item1;
@@ -273,7 +275,8 @@ namespace StoreConsoleApp.App
                         else if (input == "2")
                         {
                             // display the shopping list
-                            OrderProcess orderProcess = new();
+                            IRequestServices services = new RequestServices(server);
+                            OrderProcess orderProcess = new(services);
                             var orderDetail = await orderProcess.DisplayOrderDetail(store, customerID, productNames, productQty, locationID);
                             string receipt = orderDetail.Item1;
                             bool Processfailed = orderDetail.Item2;
