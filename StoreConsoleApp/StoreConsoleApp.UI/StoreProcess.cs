@@ -163,16 +163,14 @@ namespace StoreConsoleApp.UI
         /// <returns>true if product id is valid, false otherwise</returns>
         public bool ValidProductID(string productID, out string ProductName)
         {
-            if (int.TryParse(productID, out int productId))
+            if (int.TryParse(productID, out int productId) && productId > 0 && productId <= ProductList.Count)
             {
-                if (productId > 0 && productId <= ProductList.Count) // must within array range
+                // must within array range
+                productId -= 1; // used as List index
+                if (productId >= 0 && ProductList.Count > productId)
                 {
-                    productId -= 1; // used as List index
-                    if (productId >= 0 && ProductList.Count > productId)
-                    {
-                        ProductName = ProductList[productId].ProductName!;
-                        return true;
-                    }
+                    ProductName = ProductList[productId].ProductName!;
+                    return true;
                 }
             }
             ProductName = "";
@@ -189,7 +187,7 @@ namespace StoreConsoleApp.UI
             return prices;
         }
 
-        private decimal FindPrice(string productName, List<Product> products)
+        private static decimal FindPrice(string productName, List<Product> products)
         {
             foreach (var product in products)
             {
@@ -222,7 +220,6 @@ namespace StoreConsoleApp.UI
                 string requestUri = QueryHelpers.AddQueryString("/api/Order/inventory", query);
                 var response = await service.GetResponseForGETAsync(requestUri);
                 int inventoryAmount = await response.Content.ReadFromJsonAsync<int>();
-                // Console.WriteLine("inventory amount: " + inventoryAmount);
                 if (orderAmount <= inventoryAmount)
                 {
                     return (true, orderAmount);

@@ -217,10 +217,6 @@ namespace StoreConsoleApp.UI
         /// <returns>Inserted order information</returns>
         private async Task<IEnumerable<Order>> ProcessOrder(List<Order> orders)
         {
-            /*
-             * Ex:
-             * INSERT OrderProduct (OrderNum, ProductName, Amount, LocationID) VALUES (2,'Masking Tape', 5, 3);
-             */
             OrderList list = new();
             list.orderlist = orders;
             var json = JsonSerializer.Serialize(list);
