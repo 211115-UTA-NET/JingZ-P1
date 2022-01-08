@@ -21,8 +21,9 @@ name: Build and deploy ASP.Net Core app to an Azure Web App
 
 env:
   AZURE_WEBAPP_NAME: 211115StoreApp    # set this to the name of your Azure Web App
-  AZURE_WEBAPP_PACKAGE_PATH: './StoreApp.Api/'      # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: '6.0.x'                 # set this to the .NET Core version to use
+  AZURE_WEBAPP_PACKAGE_PATH: '../published'      # set this to the path to your web app project, defaults to the repository root
+  NETCORE_VERSION: '3.1.x'
+  #DOTNET_VERSION: '6.0.x'                 # set this to the .NET Core version to use
 
 on:
   push:
@@ -33,14 +34,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2   # checkout the repo main
 
-      - name: Set up .NET Core        # setup .Net Core SDK
+      - name: Set up .NET Core SDK ${{ env.NETCORE_VERSION }}        # setup .Net Core SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-version: ${{ env.NETCORE_VERSION }}
       
       - name: Set up dependency caching for faster builds
         uses: actions/cache@v2
@@ -50,11 +50,20 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
+      - name: Restore
+        run: |
+          cd StoreApp.Api
+          dotnet restore
+
       - name: Build with dotnet
-        run: dotnet build --configuration Release ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
+        run: |
+          cd StoreApp.Api
+          dotnet build --no-restore -c Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
+        run: |
+          cd StoreApp.Api
+          dotnet publish --no-build -c Release -o ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
 
 #       - name: Upload artifact for deployment job
 #         uses: actions/upload-artifact@v2
@@ -68,7 +77,7 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: ./published
 
 #   deploy:
 #     runs-on: ubuntu-latest
