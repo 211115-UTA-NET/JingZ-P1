@@ -1,4 +1,4 @@
-name: Sonar Analysis For Console App
+name: Sonar Analysis For Console App and Api
 
 on:
   push:
