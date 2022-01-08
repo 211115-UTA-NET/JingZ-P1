@@ -3,7 +3,7 @@
 namespace StoreConsoleApp.UI.Exceptions
 {
     [Serializable]
-    internal class UnexpectedServerBehaviorException : Exception
+    public class UnexpectedServerBehaviorException : Exception
     {
         public UnexpectedServerBehaviorException()
         {

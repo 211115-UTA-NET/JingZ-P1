@@ -3,7 +3,7 @@
 namespace StoreConsoleApp.UI
 {
     [Serializable]
-    internal class ProductNotFoundException : Exception
+    public class ProductNotFoundException : Exception
     {
         public ProductNotFoundException()
         {
