@@ -15,7 +15,7 @@ namespace StoreConsoleApp.UI
         {
             service = new();
         }
-        
+
         /// <summary>
         ///     Used to display the order detail when a user palced an order. 
         ///     Process include insert order information to database then display the result.
@@ -24,8 +24,7 @@ namespace StoreConsoleApp.UI
         /// <param name="productNames">selected products as a list</param>
         /// <param name="productQty">selected product quantities as a list</param>
         /// <param name="locationID">store location id</param>
-        /// <param name="Processfailed">return true if process succeed, false otherwise</param>
-        /// <returns>A string of the order receipt</returns>
+        /// <returns>A string of the order receipt, and a bool checks if process succeed, false otherwise.</returns>
         public async Task<(string, bool)> DisplayOrderDetail(StoreProcess store, int customerID, List<string> productNames, List<int> productQty, int locationID)
         {
             bool Processfailed;
@@ -68,7 +67,7 @@ namespace StoreConsoleApp.UI
             }
             return (receipt.ToString(), Processfailed);
         }
-                
+
         /// <summary>
         ///     Used to display order history. Process params value to get the information back.
         ///     If locationID param is provided then it will return order history of the user in current store location.
@@ -76,10 +75,9 @@ namespace StoreConsoleApp.UI
         ///     else if locationID and OrderNum params both not provided, then it will return all orders of this customer.
         /// </summary>
         /// <param name="customerID">customer id</param>
-        /// <param name="getHistoryFailed">return true when get order history failed. return false otherwise.</param>
         /// <param name="locationID">(optional param) location ID provided for search local order history</param>
         /// <param name="OrderNum">(optional param) sepecific order number or [0] for most recent. provided for searching specific/most recent order</param>
-        /// <returns>A string of order history based on user input params. See summary for details.</returns>
+        /// <returns>A string of order history based on user input params. A bool checks true when get order history failed, return false otherwise. See summary for details.</returns>
         public async Task<(string, bool)> DisplayOrderHistory(int customerID, int locationID = -1, int OrderNum = -1)
         {
             bool getHistoryFailed;
@@ -213,7 +211,7 @@ namespace StoreConsoleApp.UI
         ///     Used in DisplayOrderDetail() method.
         ///     Call repository to insert the order to database. Return inserted order information.
         /// </summary>
-        /// <param name="order">Order type list</param>
+        /// <param name="orders">Order type list</param>
         /// <returns>Inserted order information</returns>
         private async Task<IEnumerable<Order>> ProcessOrder(List<Order> orders)
         {

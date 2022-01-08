@@ -204,7 +204,7 @@ namespace StoreConsoleApp.UI
         /// <param name="amount">User input amount</param>
         /// <param name="locationID">Valid location ID</param>
         /// <param name="orderAmount">return the valid order amount</param>
-        /// <returns>true if amount is valid, false otherwise.</returns>
+        /// <returns>true if amount is valid, false otherwise. And a bool checks the validation of order amount</returns>
         public async Task<(bool, int)> validAmountAsync(string productName, string amount, int locationID)
         {
             int orderAmount;
