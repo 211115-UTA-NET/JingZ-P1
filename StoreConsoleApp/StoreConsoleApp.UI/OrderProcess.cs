@@ -9,7 +9,12 @@ namespace StoreConsoleApp.UI
 {
     public class OrderProcess
     {
-        RequestServices service = new();
+        private readonly RequestServices service;
+
+        public OrderProcess()
+        {
+            service = new();
+        }
         
         /// <summary>
         ///     Used to display the order detail when a user palced an order. 
@@ -24,11 +29,6 @@ namespace StoreConsoleApp.UI
         public async Task<(string, bool)> DisplayOrderDetail(StoreProcess store, int customerID, List<string> productNames, List<int> productQty, int locationID)
         {
             bool Processfailed;
-            // Checking List contents:
-            //for (int i = 0; i < productNames.Count; i++)
-            //{
-            //    Console.WriteLine(productNames[i] + " | " + productQty[i]);
-            //}
             var receipt = new StringBuilder();
             Dictionary<string, string> query = new() { ["customerID"] = customerID+"" };
             string requestUri = QueryHelpers.AddQueryString("/api/order/ordernum", query);
@@ -42,7 +42,6 @@ namespace StoreConsoleApp.UI
             }
             else
             {
-                // Console.WriteLine("Order #: "  + orderNumber);
                 for (int i = 0; i < productNames.Count; i++)
                 {
                     // price does not matters here
@@ -63,7 +62,6 @@ namespace StoreConsoleApp.UI
                 }
                 else
                 {
-                    // List<decimal> price = _repository.GetPrice(order);
                     receipt.AppendLine(await OrderRecordFormatAsync(locationID, allRecords));
                     Processfailed = false;
                 }
@@ -131,7 +129,7 @@ namespace StoreConsoleApp.UI
                 tmp.Add(allRecords[0]);
                 if (allRecords.Count == 1)
                 {
-                    orderHistory.AppendLine(await OrderRecordFormatAsync(allRecords[0].LocationID, allRecords));;
+                    orderHistory.AppendLine(await OrderRecordFormatAsync(allRecords[0].LocationID, allRecords));
                 }
                 else
                 {
