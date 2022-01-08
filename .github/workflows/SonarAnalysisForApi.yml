@@ -1,4 +1,4 @@
-name: Sonar Analysis
+name: Sonar Analysis For Api
 
 on:
   push:
