@@ -149,7 +149,7 @@ namespace StoreApi.DataStorage
         /// <param name="firstName">optional</param>
         /// <param name="lastName">optional</param>
         /// <returns>Customer informations</returns>
-        public async Task<IEnumerable<Customer>> FindCustomerAsync(string customerID, string firstName = "", string lastName = "")
+        public async Task<IEnumerable<Customer>> FindCustomerAsync(string customerID, string firstName, string lastName)
         {
             List<Customer> customer = new();
             bool isInt = int.TryParse(customerID, out int CustomerID);
