@@ -104,40 +104,40 @@ namespace StoreApp.Api.Controllers
         }
 
         // GET api/order/all?customerId={id}
-        [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetStoreOrderAsync([FromQuery, Required] int customerId)
-        {
-            IEnumerable<Order> orderInfo;
-            try
-            {
-                _logger.LogInformation("*** [GET] All order history of a customer ***");
-                orderInfo = await _repository.GetStoreOrdersAsync(customerId);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "*** SQL ERROR! Unable to [Get] All order history ... ***");
-                return StatusCode(500);
-            }
-            return orderInfo.ToList();
-        }
-
-        // GET api/order/recent?customerId={id}
-        //[HttpGet("recent")]
-        //public async Task<ActionResult<IEnumerable<Order>>> GetMostRecentOrderAsync([FromQuery, Required] int customerId)
+        //[HttpGet("all")]
+        //public async Task<ActionResult<IEnumerable<Order>>> GetStoreOrderAsync([FromQuery, Required] int customerId)
         //{
         //    IEnumerable<Order> orderInfo;
         //    try
         //    {
-        //        _logger.LogInformation("*** [GET] Most recent order of the customer ***");
-        //        orderInfo = await _repository.GetMostRecentOrderAsync(customerId);
+        //        _logger.LogInformation("*** [GET] All order history of a customer ***");
+        //        orderInfo = await _repository.GetStoreOrdersAsync(customerId);
         //    }
         //    catch (SqlException ex)
         //    {
-        //        _logger.LogError(ex, "*** SQL ERROR! Unable to [Get] Most recent order ... ***");
+        //        _logger.LogError(ex, "*** SQL ERROR! Unable to [Get] All order history ... ***");
         //        return StatusCode(500);
         //    }
         //    return orderInfo.ToList();
         //}
+
+        // GET api/order/recent?customerId={id}
+        [HttpGet("recent")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetMostRecentOrderAsync([FromQuery, Required] int customerId)
+        {
+            IEnumerable<Order> orderInfo;
+            try
+            {
+                _logger.LogInformation("*** [GET] Most recent order of the customer ***");
+                orderInfo = await _repository.GetMostRecentOrderAsync(customerId);
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "*** SQL ERROR! Unable to [Get] Most recent order ... ***");
+                return StatusCode(500);
+            }
+            return orderInfo.ToList();
+        }
 
         // GET api/order/specific?customerId={id}&orderNum={num}
         [HttpGet("specific")]
