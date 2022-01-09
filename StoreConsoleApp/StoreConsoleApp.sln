@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreConsoleApp.UI", "StoreConsoleApp.UI\StoreConsoleApp.UI.csproj", "{0930CE0E-3726-4CBF-B599-128F5DB6E7D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoreConsoleApp.UI", "StoreConsoleApp.UI\StoreConsoleApp.UI.csproj", "{0930CE0E-3726-4CBF-B599-128F5DB6E7D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreConsoleApp.Test", "StoreConsoleApp.Test\StoreConsoleApp.Test.csproj", "{98A0B4A7-67A5-40AD-B303-B64858E69E12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoreConsoleApp.Test", "StoreConsoleApp.Test\StoreConsoleApp.Test.csproj", "{98A0B4A7-67A5-40AD-B303-B64858E69E12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

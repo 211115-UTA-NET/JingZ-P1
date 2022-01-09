@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "StoreConsoleApp.UI": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
