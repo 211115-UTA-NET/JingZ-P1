@@ -15,5 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build --tag storeconsoleapp:$(date +%s) --file Dockerfile ..
+      run: |
+        cd StoreConsoleApp/StoreConsoleApp.UI/
+        docker build --tag storeconsoleapp:$(date +%s) --file Dockerfile ..
       
