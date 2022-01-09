@@ -8,7 +8,7 @@ namespace StoreConsoleApp.App
         public static async Task Main(string[] args)
         {
             IRequestServices services = new RequestServices(server);
-            Console.WriteLine("[ Welcome to Stationery Shop ]\n");
+            Console.WriteLine("[ Hello! Welcome to Stationery Shop ]\n");
             OrderProcess orderProcess = new(services);
             bool exitShop = false;
             while (!exitShop)
