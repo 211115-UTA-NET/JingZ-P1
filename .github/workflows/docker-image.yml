@@ -18,5 +18,9 @@ jobs:
       run: |
         cd StoreConsoleApp/StoreConsoleApp.UI/
         docker build --tag jzhuang3/storeconsoleapp --file Dockerfile ..
+
+    - name: Push Docker image to DockerHub
+      run: |
+        docker login -u "jzhuang3" -p ${{ secrets.DOCKERHUB_PSW }} docker.io
         docker push jzhuang3/storeconsoleapp
       
