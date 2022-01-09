@@ -17,5 +17,6 @@ jobs:
     - name: Build the Docker image
       run: |
         cd StoreConsoleApp/StoreConsoleApp.UI/
-        docker build --tag storeconsoleapp:$(date +%s) --file Dockerfile ..
+        docker build --tag jzhuang3/storeconsoleapp --file Dockerfile ..
+        docker push jzhuang3/storeconsoleapp
       
