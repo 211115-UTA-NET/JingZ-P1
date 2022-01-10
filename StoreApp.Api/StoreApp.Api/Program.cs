@@ -2,6 +2,8 @@ using StoreApi.DataStorage;
 
 // connection to db
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 // for local testing:
 // string connectionString = File.ReadAllText(builder.Configuration.GetConnectionString("Store-DB-Connection"));
 // for azure app service:
