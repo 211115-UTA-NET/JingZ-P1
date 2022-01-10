@@ -11,7 +11,7 @@ Nov 15 2021 Arlington .NET / Richard Hawkins, Nick Escalona
 * display all order history of a store location √
 * display all order history of a customer √
 * input validation (in the console app and also in the server) √
-* exception handling, including foreseen SQL and HTTP errors 
+* exception handling, including foreseen SQL and HTTP errors √
 * persistent data; no prices, customers, order history, etc. hardcoded in C# √
 * (recommended: asynchronous network & other I/O, at least on the REST API) √
 * (optional: logging of exceptions and other events √
