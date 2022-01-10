@@ -91,6 +91,7 @@ namespace StoreApi.DataStorage
         /// <returns>A Location class type collection</returns>
         public async Task<IEnumerable<Location>> GetLocationListAsync()
         {
+            System.Diagnostics.Trace.WriteLine("*** GET location list ***");
             _logger.LogInformation("*** GET location list ***");
             List<Location> result = new();
             DataSet dataSet = await DBReadOnlyAsync("SELECT * FROM Location");
