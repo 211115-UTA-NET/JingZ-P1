@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // for azure app service:
 string connectionString = builder.Configuration.GetConnectionString("Store-DB-Connection");
 
+IRepository repository = new SqlRepository(connectionString);
 
 // Add services to the container.
 
@@ -17,7 +18,7 @@ builder.Services.AddSwaggerGen();
 
 // provide any other dependencies that, e.g., the controllers need injected into them
 // "if anyone asks for an IRepository, give them this object"
-builder.Services.AddSingleton<IRepository>(sp => new SqlRepository(connectionString, sp.GetRequiredService<ILogger<SqlRepository>>()));
+builder.Services.AddSingleton<IRepository>(repository);
 
 var app = builder.Build();
 

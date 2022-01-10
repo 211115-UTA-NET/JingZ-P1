@@ -8,17 +8,15 @@ namespace StoreApi.DataStorage
     public class SqlRepository : IRepository
     {
         private readonly string _connectionString;
-        private readonly ILogger<SqlRepository> _logger;
 
         /// <summary>
         ///     initialize connection string
         /// </summary>
         /// <param name="connectionString"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public SqlRepository(string connectionString, ILogger<SqlRepository> logger)
+        public SqlRepository(string connectionString)
         {
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-            _logger = logger;
         }
 
         /// <summary>
@@ -91,8 +89,6 @@ namespace StoreApi.DataStorage
         /// <returns>A Location class type collection</returns>
         public async Task<IEnumerable<Location>> GetLocationListAsync()
         {
-            // System.Diagnostics.Trace.WriteLine("Entering the About View");
-            _logger.LogInformation("*** GET location list ***");
             List<Location> result = new();
             DataSet dataSet = await DBReadOnlyAsync("SELECT * FROM Location");
             foreach (DataRow row in dataSet.Tables[0].Rows)
