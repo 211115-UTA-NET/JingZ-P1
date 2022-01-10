@@ -24,7 +24,7 @@ namespace StoreApp.Api.Controllers
         {
             IEnumerable<Location> stores;
             stores = await _repository.GetLocationListAsync();
-            System.Diagnostics.Trace.WriteLine("GET location list");
+            System.Diagnostics.Trace.TraceInformation("GET location list");
             _logger.LogInformation("*** GET location list ***");
             return stores.ToList();
         }
