@@ -19,14 +19,14 @@ namespace StoreApp.Api.Controllers
         }
 
         // GET api/storeinfo
-        //[HttpGet]
-        //public async Task<IEnumerable<Location>> GetStoreLocations()
-        //{
-        //    IEnumerable<Location> stores;
-        //    stores = await _repository.GetLocationListAsync();
-        //    _logger.LogInformation("*** GET location list ***");
-        //    return stores.ToList();
-        //}
+        [HttpGet]
+        public async Task<IEnumerable<Location>> GetStoreLocations()
+        {
+            IEnumerable<Location> stores;
+            stores = await _repository.GetLocationListAsync();
+            _logger.LogInformation("*** GET location list ***");
+            return stores.ToList();
+        }
 
         // ActionResult types represent various HTTP status codes.
         // GET api/storeinfo/{id}
