@@ -41,15 +41,15 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
           
-      - name: Test Coverage
-        run: |
-          cd StoreConsoleApp/StoreConsoleApp.Test/
-          dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover 
-          
       - name: Setup .NET 6
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 6.0.x
+          
+      - name: Test Coverage
+        run: |
+          cd StoreConsoleApp/StoreConsoleApp.Test/
+          dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover 
           
       - name: Build and analyze
         env:
