@@ -57,7 +57,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"211115-UTA-NET_JingZ-P1" /o:"211115-uta-net" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"211115-UTA-NET_JingZ-P1" /o:"211115-uta-net" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="D:\a\JingZ-P1\JingZ-P1\StoreConsoleApp\StoreConsoleApp.Test\coverage.opencover.xml"
           dotnet build ./StoreConsoleApp/StoreConsoleApp.sln
           dotnet build ./StoreApp.Api/StoreApp.Api.sln
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
