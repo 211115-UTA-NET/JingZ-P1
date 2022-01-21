@@ -54,5 +54,9 @@ This application is designed for use by a retail store employee to record incomi
 * Exit the store location/Back to menu options
 
 ## Getting Started
-> git clone https://github.com/211115-UTA-NET/JingZ-P1.git
-> 
+* Download Docker Desktop: https://www.docker.com/products/docker-desktop
+* Run the following commands:
+  * On git bash: 
+    > winpty docker run -it --name store-app-container jzhuang3/storeconsoleapp
+  * On terminal: 
+    > docker run -it --name store-app-container jzhuang3/storeconsoleapp
